@@ -30,7 +30,17 @@ namespace backend.Controllers
             return Ok(teams);
         }
 
+        // GET: /teams/all
+        [AllowAnonymous]
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllPublic()
+        {
+            var teams = await _context.Teams.ToListAsync();
+            return Ok(teams);
+        }
+
         // GET: /teams/{id}
+        [AllowAnonymous]
         [HttpGet("{id:int}")]
         public async Task<IActionResult> Get(int id)
         {
@@ -40,8 +50,6 @@ namespace backend.Controllers
         }
 
         // GET: /teams/mine
-        // Returns teams where the authenticated user is a member or coach
-
         [HttpGet("mine")]
         public async Task<IActionResult> GetMyTeams()
         {
@@ -59,7 +67,6 @@ namespace backend.Controllers
             return Ok(teams);
         }
 
-        // POST: /teams
         // POST: /teams/create
         // Create new team — if request contains valid authenticated user, use that user id as coachId;
         // otherwise fall back to provided dto.CoachId or 0.
@@ -101,7 +108,7 @@ namespace backend.Controllers
         }
 
         // PUT: /teams/{id}
-        // Update existing team
+        // Update existing team 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(int id, [FromBody] TeamDto dto)
         {
@@ -120,5 +127,18 @@ namespace backend.Controllers
 
             return NoContent();
         }
+        // DELETE: /teams/{id}
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var team = await _context.Teams.FindAsync(id);
+            if (team == null) return NotFound();
+
+            _context.Teams.Remove(team);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
     }
 }

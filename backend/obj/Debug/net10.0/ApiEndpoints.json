@@ -100,6 +100,32 @@
   },
   {
     "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "Delete",
+    "RelativePath": "Teams/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "GetAllPublic",
+    "RelativePath": "Teams/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
     "Method": "Create",
     "RelativePath": "Teams/create",
     "HttpMethod": "POST",
