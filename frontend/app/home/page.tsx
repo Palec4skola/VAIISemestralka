@@ -21,7 +21,7 @@ export default function HomePage() {
     if (item === "Dochádzka") router.push("/attendance");
   };
   const team = {
-    name: "Skolkari",
+    name: "MFK Ružomberok",
     members: 2,
     followers: 0,
     level: 0,

@@ -39,3 +39,28 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build folders
+bin/
+obj/
+
+# .NET outputs
+*.dll
+*.exe
+*.pdb
+
+# Cache
+*.cache
+*.db
+*.mpack
+
+# Copilot snapshots
+.vscode/
+.vscodes/ 

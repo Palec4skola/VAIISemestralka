@@ -29,7 +29,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "Microsoft.AspNetCore.Identity.Data.LoginRequest",
+        "Type": "backend.DTO.LoginRequest",
         "IsRequired": true
       }
     ],
@@ -45,15 +45,25 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "FootballTeam.Controllers.RegisterRequest",
+        "Type": "backend.DTO.RegisterDto",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TeamsController",
-    "Method": "GetTeam",
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "GetAll",
+    "RelativePath": "Teams",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "Get",
     "RelativePath": "Teams/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -65,23 +75,86 @@
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
-      {
-        "Type": "FootballTeam.Models.Team",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
+    "ReturnTypes": []
   },
   {
-    "ContainingType": "TeamsController",
-    "Method": "DeleteTeam",
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "Update",
     "RelativePath": "Teams/{id}",
-    "HttpMethod": "DELETE",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "backend.DTO.TeamDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "Create",
+    "RelativePath": "Teams/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "backend.DTO.TeamDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "GetMyTeams",
+    "RelativePath": "Teams/mine",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "GetAll",
+    "RelativePath": "Trainings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "Create",
+    "RelativePath": "Trainings",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "backend.DTO.TrainingDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "Get",
+    "RelativePath": "Trainings/{id}",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
@@ -94,29 +167,40 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "TeamsController",
-    "Method": "CreateTeam",
-    "RelativePath": "Teams/create",
-    "HttpMethod": "POST",
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "Update",
+    "RelativePath": "Trainings/{id}",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
         "Name": "dto",
-        "Type": "CreateTeamDto",
+        "Type": "backend.DTO.TrainingDto",
         "IsRequired": true
       }
     ],
-    "ReturnTypes": [
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "Delete",
+    "RelativePath": "Trainings/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
-        "Type": "FootballTeam.Models.Team",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
       }
-    ]
+    ],
+    "ReturnTypes": []
   }
 ]

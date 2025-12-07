@@ -23,23 +23,20 @@ type Member = {
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export default function TeamPage() {
-  const [team, setTeam] = useState<Team | null>(null);
-  //const [members, setMembers] = useState<Member[]>([]);
+  const [teams, setTeams] = useState<Team[] | null>(null);
+  const [members, setMembers] = useState<Member[]>([]);
   const [error, setError] = useState("");
-  const members = [
-  { id: 1, name: "Peter Novák", email: "peter@example.com", role: "coach" },
-  { id: 2, name: "Ján Kováč", email: "jan@example.com", role: "player" },
-  { id: 3, name: "Martin Horváth", email: "martin@example.com", role: "player" },
-];
+//   const members = [
+//   { id: 1, name: "Peter Novák", email: "peter@example.com", role: "coach" },
+//   { id: 2, name: "Ján Kováč", email: "jan@example.com", role: "player" },
+//   { id: 3, name: "Martin Horváth", email: "martin@example.com", role: "player" },
+// ];
 
 
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const res = await fetch(`${API_URL}/api/teams/me`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+        const res = await fetch(`${API_URL}/api/teams`, {
         });
 
         if (!res.ok) {
@@ -48,8 +45,8 @@ export default function TeamPage() {
         }
 
         const data = await res.json();
-        setTeam(data.team);
-        //setMembers(data.members);
+        setTeams(data.teams);
+        setMembers(data.members);
       } catch (e) {
         setError("Server nie je dostupný");
       }
@@ -70,11 +67,11 @@ export default function TeamPage() {
       <section className="team-card">
         {error && <p className="team-error">{error}</p>}
 
-        {team && (
+        {teams && (
           <>
-            <h2 className="team-name">{team.name}</h2>
-            <p className="team-desc">{team.description}</p>
-            <p className="team-meta">Krajina: {team.country}</p>
+            <h2 className="team-name">{teams[0].name}</h2>
+            <p className="team-desc">{teams[0].description}</p>
+            <p className="team-meta">Krajina: {teams[0].country}</p>
           </>
         )}
 

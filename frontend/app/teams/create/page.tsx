@@ -25,19 +25,21 @@ export default function CreatePage() {
             });
             return;
         }
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const response = await fetch(`${API_URL}/teams/create`, {
-        method: "POST",
-        headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({ name, description, country }),
-    });
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify({ name, description, country }),
+        });
 
     if (response.ok) {
       router.push("/home");
     } else {
       console.log("CREATE TEAM ERROR:", await response.text());
+      setError("Chyba pri vytváraní tímu");
     }
 }
 return (

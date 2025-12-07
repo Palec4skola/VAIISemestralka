@@ -1,0 +1,10 @@
+﻿namespace backend.DTO
+{
+    public class TrainingDto
+    {
+        public DateTime Date { get; set; }
+        public string Location { get; set; } = string.Empty;
+        public int TeamId { get; set; }
+        public string Description { get; set; } = string.Empty;
+    }
+}

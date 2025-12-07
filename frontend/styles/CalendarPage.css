@@ -1,0 +1,108 @@
+.calendar-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f4f8;
+}
+
+.calendar-main {
+  flex: 1;
+  padding: 24px 32px;
+}
+
+.calendar-header {
+  margin-bottom: 16px;
+}
+
+.calendar-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Grid kalendára */
+
+.calendar-grid {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px 20px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+.calendar-weekdays,
+.calendar-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.calendar-weekdays {
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+}
+
+.calendar-day {
+  min-height: 80px;
+  border-radius: 8px;
+  padding: 4px 6px;
+  font-size: 0.8rem;
+  background: #f9fafb;
+  margin: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.calendar-day.empty {
+  background: transparent;
+}
+
+.calendar-day-number {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 2px;
+}
+
+.calendar-day-activities {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Aktivita v dni */
+
+.calendar-activity {
+  border-radius: 6px;
+  padding: 2px 4px;
+  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* tréning = modrý, zápas = fialový */
+
+.calendar-activity.training {
+  background: #e0f2fe;
+  color: #1d4ed8;
+}
+
+.calendar-activity.match {
+  background: #ede9fe;
+  color: #7c3aed;
+}
+
+.calendar-activity-time {
+  font-weight: 600;
+}
+
+.calendar-activity-title {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
