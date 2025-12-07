@@ -1,0 +1,133 @@
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.player-extra p {
+  margin: 2px 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+/* Layout je zdieľaný s team stránkou, ak už máš tieto triedy, nechaj ich */
+.team-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f4f4f8;
+}
+
+.team-main {
+  flex: 1;
+  padding: 24px 32px;
+}
+
+.team-header-bar {
+  margin-bottom: 16px;
+}
+
+.team-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+/* Karta pre hráča */
+.player-card {
+  max-width: 520px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
+
+/* Horná časť – avatar + základné info */
+.player-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.player-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #7c4dff, #06b6d4);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.player-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.player-email {
+  margin: 2px 0 4px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.player-role {
+  font-size: 0.8rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* Extra info blok */
+.player-extra {
+  margin-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+}
+
+.player-extra p {
+  margin: 4px 0;
+  font-size: 0.9rem;
+  color: #4b5563;
+}.player-extra {
+  margin-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.player-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.edit-icon-button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px 4px;
+  border-radius: 999px;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.edit-icon-button:hover {
+  background: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.edit-icon-button:active {
+  transform: translateY(0);
+}
+
