@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import "@/styles/RegisterPage.css";
 import { useRouter } from "next/navigation";
 import { validateRequiredTeamName, validateRequiredCountry, validateRequiredDescription } from "@/lib/validation";
 export default function CreatePage() {

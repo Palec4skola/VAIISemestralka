@@ -1,10 +1,10 @@
 "use client";
 
-import "../styles/HomePage.css";
 import { useRouter, usePathname } from "next/navigation";
+import { Nav } from "react-bootstrap";
 
 type SidebarProps = {
-  selected?: string; // môžeš nechať voliteľné alebo vyhodiť
+  selected?: string;
   setSelected?: (value: string) => void;
 };
 
@@ -21,37 +21,40 @@ export default function Sidebar({ selected, setSelected }: SidebarProps) {
     { label: "Dochádzka", path: "/attendance" },
   ];
 
-  const handleClick = (itemLabel: string, path: string) => {
-    setSelected?.(itemLabel);      // ak rodič chce vedieť selected
-    router.push(path);             // reálna navigácia
-  };
-
   return (
-    <div className="sidebar">
+    <div className="d-flex flex-column bg-dark text-light vh-100 p-3">
+      {/* Logo / názov */}
       <button
-        className="logo-button"
-        type="button"
-        onClick={() => router.push("/home")}   // HomeBase → domovská stránka
+        className="btn btn-dark mb-4 fs-4 fw-bold text-start"
+        onClick={() => router.push("/home")}
       >
         HomeBase
       </button>
 
-      <ul className="menu">
+      {/* Menu */}
+      <Nav className="flex-column gap-2">
         {menuItems.map((item) => {
           const isActive =
             selected === item.label || pathname.startsWith(item.path);
 
           return (
-            <li
+            <Nav.Link
               key={item.path}
-              className={isActive ? "active" : ""}
-              onClick={() => handleClick(item.label, item.path)}
+              onClick={() => {
+                setSelected?.(item.label);
+                router.push(item.path);
+              }}
+              className={`text-start rounded px-3 py-2 ${
+                isActive ? "bg-primary text-white" : "text-light"
+              }`} 
+              style={{ cursor: "pointer" }}
             >
               {item.label}
-            </li>
+            </Nav.Link>
           );
         })}
-      </ul>
+      </Nav>
     </div>
   );
 }
+

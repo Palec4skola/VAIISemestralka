@@ -26,7 +26,17 @@ namespace backend.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var teams = await _context.Teams.ToListAsync();
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
+            if (!int.TryParse(userIdClaim, out var userId)) return Unauthorized();
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound("User not found");
+
+            var teams = await _context.Teams
+                .Where(t => t.CoachId == userId || t.Id == user.TeamId)
+                .ToListAsync();
+
             return Ok(teams);
         }
 
@@ -49,48 +59,20 @@ namespace backend.Controllers
             return Ok(team);
         }
 
-        // GET: /teams/mine
-        [HttpGet("mine")]
-        public async Task<IActionResult> GetMyTeams()
-        {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim)) return Unauthorized();
-            if (!int.TryParse(userIdClaim, out var userId)) return Unauthorized();
-
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null) return NotFound("User not found");
-
-            var teams = await _context.Teams
-                .Where(t => t.CoachId == userId || t.Id == user.TeamId)
-                .ToListAsync();
-
-            return Ok(teams);
-        }
-
         // POST: /teams/create
-        // Create new team — if request contains valid authenticated user, use that user id as coachId;
-        // otherwise fall back to provided dto.CoachId or 0.
+        // Create new team — read coach id from authenticated user's JWT and assign it to CoachId.
         [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] TeamDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            int coachId = 0;
+            // Require authenticated user and extract id from JWT claims.
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                              
 
-            // If request is authenticated, try to read NameIdentifier claim
-            if (User?.Identity != null && User.Identity.IsAuthenticated)
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var coachId))
             {
-                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!string.IsNullOrEmpty(userIdClaim) && int.TryParse(userIdClaim, out var parsed))
-                {
-                    coachId = parsed;
-                }
-            }
-
-            // If not authenticated or claim missing, fall back to dto.CoachId when provided
-            if (coachId == 0 && dto.CoachId > 0)
-            {
-                coachId = dto.CoachId;
+                return Unauthorized();
             }
 
             var newTeam = new Team

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import "@/styles/TrainingsPage.css";
 
+
 type TrainingForm = {
   date: string;      // napr. "2024-12-10"
   time: string;      // "18:00"

@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Sidebar from "../../components/Sidebar";
 import TeamInfoPanel from "../../components/TeamInfoPanel";
 import "../../styles/HomePage.css";
-import "../../styles/RegisterPage.css";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {

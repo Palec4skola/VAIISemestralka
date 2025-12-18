@@ -175,18 +175,6 @@
         }
       }
     },
-    "/Teams/mine": {
-      "get": {
-        "tags": [
-          "Teams"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
     "/Teams/create": {
       "post": {
         "tags": [

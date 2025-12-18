@@ -1,21 +1,18 @@
 "use client";
+import Button from "react-bootstrap/Button";
+import { useRouter } from "next/navigation";
 import "@/styles/LandingPage.css";
 
 export default function LandingPage() {
+  const router = useRouter();
+
   return (
     <div className="landing-container">
-      <h1 className="landing-title">Vitaj v aplikácii pre športové tímy</h1>
-
-      <p className="landing-subtitle">
-        Sleduj tréningy, hráčov, dochádzku a spravuj svoj tím jednoducho.
-      </p>
-
-      <button 
-        className="landing-button"
-        onClick={() => (window.location.href = "/login")}
-      >
+      <h1>Vitaj v aplikácii pre športové tímy</h1>
+      <p>Sleduj tréningy, hráčov, dochádzku a spravuj svoj tím jednoducho.</p>
+      <Button onClick={() => router.push("/login")} variant="primary">
         Prihlásiť sa
-      </button>
+      </Button>
     </div>
   );
 }

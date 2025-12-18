@@ -1,6 +1,5 @@
 "use client";
 import '@/styles/HomePage.css';
-import '@/styles/RegisterPage.css';
 import '@/styles/TeamPage.css';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -27,24 +26,26 @@ export default function TeamPage() {
   const [teams, setTeams] = useState<Team[] | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
-//   const members = [
-//   { id: 1, name: "Peter Novák", email: "peter@example.com", role: "coach" },
-//   { id: 2, name: "Ján Kováč", email: "jan@example.com", role: "player" },
-//   { id: 3, name: "Martin Horváth", email: "martin@example.com", role: "player" },
-// ];
 
 
   useEffect(() => {
   const fetchTeam = async () => {
     try {
-      const res = await fetch(`${API_URL}/teams/all`);
+       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const response = await fetch(`${API_URL}/teams`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {})
+          },
+        });
 
-      if (!res.ok) {
-        setError(await res.text());
+      if (!response.ok) {
+        setError(await response .text());
         return;
       }
 
-      const data: Team[] = await res.json(); // priamo pole
+      const data: Team[] = await response .json(); // priamo pole
       setTeams(data);
       // setMembers nepotrebuješ, endpoint žiadnych členov neposiela
     } catch (e) {

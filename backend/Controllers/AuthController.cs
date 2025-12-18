@@ -74,7 +74,7 @@ namespace FootballTeam.Controllers
             var durationMinutes = jwtSection.GetValue<int>("Jwt:DurationMinutes");
 
             var claims = new[] {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, System.Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Name),

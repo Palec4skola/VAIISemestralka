@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/TeamPage.css";
+import "@/styles/TrainingsPage.css";
 import { useRouter } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
