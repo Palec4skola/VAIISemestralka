@@ -20,7 +20,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "FootballTeam.Controllers.AuthController",
+    "ContainingType": "backend.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "Auth/login",
     "HttpMethod": "POST",
@@ -36,7 +36,7 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "FootballTeam.Controllers.AuthController",
+    "ContainingType": "backend.Controllers.AuthController",
     "Method": "Register",
     "RelativePath": "Auth/register",
     "HttpMethod": "POST",
@@ -53,7 +53,7 @@
   },
   {
     "ContainingType": "backend.Controllers.TeamsController",
-    "Method": "GetAll",
+    "Method": "GetMyTeams",
     "RelativePath": "Teams",
     "HttpMethod": "GET",
     "IsController": true,
@@ -63,7 +63,7 @@
   },
   {
     "ContainingType": "backend.Controllers.TeamsController",
-    "Method": "Get",
+    "Method": "GetTeamDetail",
     "RelativePath": "Teams/{id}",
     "HttpMethod": "GET",
     "IsController": true,
@@ -116,12 +116,34 @@
   },
   {
     "ContainingType": "backend.Controllers.TeamsController",
-    "Method": "GetAllPublic",
-    "RelativePath": "Teams/all",
-    "HttpMethod": "GET",
+    "Method": "GenerateInviteCode",
+    "RelativePath": "Teams/{teamId}/invite",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
+    "Parameters": [
+      {
+        "Name": "teamId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "LeaveTeam",
+    "RelativePath": "Teams/{teamId}/leave",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teamId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -141,29 +163,29 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "GetAll",
-    "RelativePath": "Trainings",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "Create",
-    "RelativePath": "Trainings",
+    "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "JoinTeamByCode",
+    "RelativePath": "Teams/join",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "dto",
-        "Type": "backend.DTO.TrainingDto",
+        "Name": "code",
+        "Type": "System.String",
         "IsRequired": true
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "GetMyUpcoming",
+    "RelativePath": "Trainings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -214,6 +236,22 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "Create",
+    "RelativePath": "Trainings/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "dto",
+        "Type": "backend.DTO.TrainingDto",
         "IsRequired": true
       }
     ],

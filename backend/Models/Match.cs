@@ -1,4 +1,4 @@
-﻿namespace FootballTeam.Models
+﻿namespace backend.Models
 {
     public class Match
     {

@@ -1,24 +1,23 @@
 "use client";
-import '@/styles/HomePage.css';
-import '@/styles/TeamPage.css';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Sidebar from '@/components/Sidebar';
-import Link from 'next/link';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  ListGroup,
+  Card,
+  Button,
+  Alert,
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
+import { Trash } from "react-bootstrap-icons";
+import Sidebar from "@/components/Sidebar";
 type Team = {
-  id: number;
-  name: string;
+  teamId: number;
+  teamName: string;
   description: string;
   country: string;
   coachId: number;
-};
-
-type Member = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
 };
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -27,97 +26,118 @@ export default function TeamPage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-
   useEffect(() => {
-  const fetchTeam = async () => {
-    try {
-       const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const fetchTeam = async () => {
+      try {
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const response = await fetch(`${API_URL}/teams`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {})
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
         });
 
-      if (!response.ok) {
-        setError(await response .text());
-        return;
-      }
+        if (!response.ok) {
+          setError(await response.text());
+          return;
+        }
 
-      const data: Team[] = await response .json(); // priamo pole
-      setTeams(data);
-      // setMembers nepotrebuješ, endpoint žiadnych členov neposiela
-    } catch (e) {
-      setError("Server nie je dostupný");
-    }
-  };
+        const data: Team[] = await response.json();
+        setTeams(data);
+      } catch (e) {
+        setError("Server nie je dostupný");
+      }
+    };
 
     fetchTeam();
   }, []);
-const handleDelete = async (id: number) => {
-  if (!confirm("Naozaj chceš odstrániť tento tím?")) return;
+  const handleDelete = async (id: number) => {
+    if (!confirm("Naozaj chceš odstrániť tento tím?")) return;
 
-  try {
-    const res = await fetch(`${API_URL}/teams/${id}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    });
+    try {
+      const res = await fetch(`${API_URL}/teams/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
 
-    if (!res.ok && res.status !== 204) {
-      setError(await res.text());
-      return;
+      if (!res.ok && res.status !== 204) {
+        setError(await res.text());
+        return;
+      }
+
+      setTeams((prev) => (prev ? prev.filter((t) => t.teamId !== id) : prev));
+    } catch {
+      setError("Server nie je dostupný");
     }
-
-    setTeams((prev) => (prev ? prev.filter((t) => t.id !== id) : prev));
-  } catch {
-    setError("Server nie je dostupný");
-  }
-};
+  };
   return (
-  <div className="team-layout">
-    <Sidebar selected="Tím" setSelected={() => {}} />
+    <Container fluid className="p-0">
+      <Row>
+        <Col xs="auto" className="p-0">
+          <Sidebar selected="Tím" setSelected={() => {}} />
+        </Col>
 
-    <main className="team-main">
-      <header className="team-header-bar">
-        <h1 className="team-title">Tímy</h1>
-      </header>
+        <Col>
+          <h1 className="h3 mb-4">Tímy</h1>
 
-      <section className="team-card">
-        {error && <p className="team-error">{error}</p>}
+          {error && (
+            <Alert variant="danger" className="mb-3">
+              {error}
+            </Alert>
+          )}
 
-        {teams && teams.length > 0 ? (
-          <ul className="team-list">
-            {teams.map((team) => (
-              <li key={team.id} className="team-list-item">
-                <button
-                  className="team-card-button"
-                  onClick={() => router.push(`/teams/${team.id}`)}
-                  type="button"
-                >
-                  <h2 className="team-name">{team.name}</h2>
-                  <p className="team-desc">{team.description}</p>
-                  <p className="team-meta">Krajina: {team.country}</p>
-                  <p className="team-meta">Tréner ID: {team.coachId}</p>
-                </button>
-                <button
-                  type="button"
-                  className="delete-icon-button"
-                  onClick={() => handleDelete(team.id)}
-                >
-                  ✖
-                </button>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>Žiadne tímy neboli nájdené.</p>
-        )}
-      </section>
-    </main>
-  </div>
+          <Row className="justify-content-center">
+            <Col xs={12} md={10} lg={8}>
+              <Card className="shadow-sm">
+                <Card.Header>
+                  <strong>Zoznam tímov</strong>
+                </Card.Header>
 
-);
+                <ListGroup variant="flush">
+                  {teams && teams.length > 0 ? (
+                    teams.map((team) => (
+                      <ListGroup.Item key={team.teamId}>
+                        <Row className="align-items-center">
+                          <Col
+                            role="button"
+                            onClick={() => router.push(`/teams/${team.teamId}`)}
+                          >
+                            <div className="fw-semibold">{team.teamName}</div>
+                            <div className="text-muted small">
+                              {team.description}
+                            </div>
+                            <div className="text-muted small">
+                              Krajina: {team.country}
+                            </div>
+                          </Col>
+
+                          <Col xs="auto">
+                            <Button
+                              variant="outline-danger"
+                              size="sm"
+                              onClick={() => handleDelete(team.teamId)}
+                            >
+                              <Trash />
+                            </Button>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    ))
+                  ) : (
+                    <ListGroup.Item key="empty">
+                      Žiadne tímy neboli nájdené.
+                    </ListGroup.Item>
+                  )}
+                </ListGroup>
+              </Card>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+  );
 }

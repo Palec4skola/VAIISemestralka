@@ -22,7 +22,7 @@ namespace backend.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("FootballTeam.Models.Attendance", b =>
+            modelBuilder.Entity("backend.Models.Attendance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -53,7 +53,7 @@ namespace backend.Migrations
                     b.ToTable("Attendances");
                 });
 
-            modelBuilder.Entity("FootballTeam.Models.Match", b =>
+            modelBuilder.Entity("backend.Models.Match", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -84,7 +84,7 @@ namespace backend.Migrations
                     b.ToTable("Matches");
                 });
 
-            modelBuilder.Entity("FootballTeam.Models.Team", b =>
+            modelBuilder.Entity("backend.Models.Team", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -112,7 +112,60 @@ namespace backend.Migrations
                     b.ToTable("Teams");
                 });
 
-            modelBuilder.Entity("FootballTeam.Models.Training", b =>
+            modelBuilder.Entity("backend.Models.TeamInviteCode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("TeamId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TeamId");
+
+                    b.ToTable("TeamInviteCodes");
+                });
+
+            modelBuilder.Entity("backend.Models.TeamUser", b =>
+                {
+                    b.Property<int>("TeamId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("JoinedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("TeamId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("TeamUsers");
+                });
+
+            modelBuilder.Entity("backend.Models.Training", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -139,7 +192,7 @@ namespace backend.Migrations
                     b.ToTable("Trainings");
                 });
 
-            modelBuilder.Entity("FootballTeam.Models.User", b =>
+            modelBuilder.Entity("backend.Models.User", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -163,12 +216,49 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("TeamId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("backend.Models.TeamInviteCode", b =>
+                {
+                    b.HasOne("backend.Models.Team", "Team")
+                        .WithMany()
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+                });
+
+            modelBuilder.Entity("backend.Models.TeamUser", b =>
+                {
+                    b.HasOne("backend.Models.Team", "Team")
+                        .WithMany("TeamUsers")
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Models.User", "User")
+                        .WithMany("TeamUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Team");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Models.Team", b =>
+                {
+                    b.Navigation("TeamUsers");
+                });
+
+            modelBuilder.Entity("backend.Models.User", b =>
+                {
+                    b.Navigation("TeamUsers");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,8 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FootballTeam.Data;
-using FootballTeam.Models;
+using backend.Models;
 using backend.DTO;
 
 namespace FootballTeam.Controllers
@@ -19,12 +23,12 @@ namespace FootballTeam.Controllers
         }
 
         // GET: /api/trainings
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
-        {
-            var trainings = await _context.Trainings.ToListAsync();
-            return Ok(trainings);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll()
+        //{
+        //    var trainings = await _context.Trainings.ToListAsync();
+        //    return Ok(trainings);
+        //}
 
         // GET: /api/trainings/{id}
         [HttpGet("{id:int}")]
@@ -35,17 +39,63 @@ namespace FootballTeam.Controllers
             return Ok(training);
         }
 
+        // GET: /api/trainings/mine
+        // Returns upcoming trainings for teams the authenticated user belongs to or coaches
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> GetMyUpcoming()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            // teams where user is a member
+            var memberTeamIds = await _context.TeamUsers
+                .Where(tu => tu.UserId == userId)
+                .Select(tu => tu.TeamId)
+                .Distinct()
+                .ToListAsync();
+
+            // teams where user is coach
+            var coachTeamIds = await _context.Teams
+                .Where(t => t.CoachId == userId)
+                .Select(t => t.Id)
+                .ToListAsync();
+
+            var teamIds = memberTeamIds.Union(coachTeamIds).Distinct().ToList();
+
+            if (!teamIds.Any())
+                return Ok(Array.Empty<Training>());
+
+            var now = DateTime.UtcNow;
+            var trainings = await _context.Trainings
+                .Where(tr => teamIds.Contains(tr.TeamId) && tr.Date >= now)
+                .OrderBy(tr => tr.Date)
+                .ToListAsync();
+
+            return Ok(trainings);
+        }
+
         // POST: /api/trainings
-        [HttpPost]
+        [Authorize]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] TrainingDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            // find team where this user is coach
+            var team = await _context.Teams.FirstOrDefaultAsync(t => t.CoachId == userId);
+            if (team == null) return BadRequest("Authenticated user is not a coach of any team.");
 
             var training = new Training
             {
                 Date = dto.Date,
                 Location = dto.Location ?? string.Empty,
-                TeamId = 1,
+                TeamId = team.Id,
                 Description = dto.Description ?? string.Empty
             };
 

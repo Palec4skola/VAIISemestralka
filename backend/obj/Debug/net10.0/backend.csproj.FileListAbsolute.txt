@@ -116,3 +116,4 @@ C:\Users\pavol\OneDrive\Desktop\V.semester\VAII\SemestralnaPraca\backend\bin\Deb
 C:\Users\pavol\OneDrive\Desktop\V.semester\VAII\SemestralnaPraca\backend\bin\Debug\net10.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\pavol\OneDrive\Desktop\V.semester\VAII\SemestralnaPraca\backend\bin\Debug\net10.0\System.IdentityModel.Tokens.Jwt.dll
 C:\Users\pavol\OneDrive\Desktop\V.semester\VAII\SemestralnaPraca\backend\obj\Debug\net10.0\backend.sourcelink.json
+C:\Users\pavol\OneDrive\Desktop\V.semester\VAII\SemestralnaPraca\backend\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt

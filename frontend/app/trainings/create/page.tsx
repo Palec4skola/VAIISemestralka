@@ -1,109 +1,121 @@
 "use client";
-
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/TrainingsPage.css";
-
-
-type TrainingForm = {
-  date: string;      // napr. "2024-12-10"
-  time: string;      // "18:00"
-  location: string;
-  description: string;
-};
+import { useRouter } from "next/navigation";
+import {
+  Form,
+  Button,
+  Card,
+  Container,
+  Row,
+  Col,
+  Alert,
+} from "react-bootstrap";
 
 export default function CreateTrainingPage() {
-  const [form, setForm] = useState<TrainingForm>({
-    date: "",
-    time: "",
-    location: "",
-    description: "",
-  });
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+  const router = useRouter();
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [date, setDate] = useState("");
+  const [location, setLocation] = useState("");
+  const [description, setDescription] = useState("");
 
-  const handleChange =
-    (field: keyof TrainingForm) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    if (!form.date || !form.time || !form.location) {
+    if (!date || !location) {
       setError("Vyplň dátum, čas a miesto tréningu");
       return;
     }
-
-    // zatiaľ len konzola – neskôr sem pôjde fetch na API
-    console.log("CREATE TRAINING MOCK:", form);
-    setSuccess("Tréning bol (mock) vytvorený.");
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const response = await fetch(`${API_URL}/trainings/create`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ date, location, description }),
+    });
+    if (!response.ok) {
+        setError(await response.text());
+        return;
+      }
+      router.push("/trainings");
   };
 
   return (
-    <div className="trainings-layout">
+    <div className="d-flex">
       <Sidebar selected="Tréningy" setSelected={() => {}} />
 
-      <main className="trainings-main">
-        <header className="trainings-header">
-          <h1 className="trainings-title">Vytvoriť tréning</h1>
-        </header>
+      <main className="flex-grow-1 p-3">
+        <Container fluid>
+          <Row className="mb-4">
+            <Col>
+              <h1 className="h3">Vytvoriť tréning</h1>
+            </Col>
+          </Row>
 
-        <section className="training-detail-card">
-          <form onSubmit={handleSubmit} className="training-form">
-            {error && <p className="team-error">{error}</p>}
-            {success && <p className="team-success">{success}</p>}
+          <Row className="justify-content-center">
+            <Col xs={12} md={8} lg={6}>
+              <Card>
+                <Card.Body>
+                  <Form>
+                    {error && (
+                      <Alert variant="danger" className="mb-3">
+                        {error}
+                      </Alert>
+                    )}
+                    {success && (
+                      <Alert variant="success" className="mb-3">
+                        {success}
+                      </Alert>
+                    )}
 
-            <div className="form-row">
-              <label htmlFor="date">Dátum</label>
-              <input
-                id="date"
-                type="date"
-                value={form.date}
-                onChange={handleChange("date")}
-              />
-            </div>
+                    <Form.Group className="mb-3" controlId="date" onSubmit={handleCreate}>
+                      <Form.Label>Dátum</Form.Label>
+                      <Form.Control
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
+                      />
+                    </Form.Group>
 
-            <div className="form-row">
-              <label htmlFor="time">Čas</label>
-              <input
-                id="time"
-                type="time"
-                value={form.time}
-                onChange={handleChange("time")}
-              />
-            </div>
+                    <Form.Group className="mb-3" controlId="location">
+                      <Form.Label>Miesto</Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Ihrisko, štadión..."
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                      />
+                    </Form.Group>
 
-            <div className="form-row">
-              <label htmlFor="location">Miesto</label>
-              <input
-                id="location"
-                type="text"
-                placeholder="Ihrisko, štadión..."
-                value={form.location}
-                onChange={handleChange("location")}
-              />
-            </div>
+                    <Form.Group className="mb-3" controlId="description">
+                      <Form.Label>Popis</Form.Label>
+                      <Form.Control
+                        as="textarea"
+                        rows={3}
+                        placeholder="Krátky popis tréningu..."
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </Form.Group>
 
-            <div className="form-row">
-              <label htmlFor="description">Popis</label>
-              <textarea
-                id="description"
-                rows={3}
-                placeholder="Krátky popis tréningu..."
-                value={form.description}
-                onChange={handleChange("description")}
-              />
-            </div>
-
-            <button type="submit" className="primary-button">
-              Uložiť tréning
-            </button>
-          </form>
-        </section>
+                    <div className="d-grid">
+                      <Button type="submit" variant="primary" onClick={handleCreate}>
+                        Uložiť tréning
+                      </Button>
+                    </div>
+                  </Form>
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
       </main>
-    </div>);
+    </div>
+  );
 }

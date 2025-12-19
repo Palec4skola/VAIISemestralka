@@ -3,8 +3,18 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/TrainingsPage.css";
-import { useRouter } from "next/navigation";
+import { Modal, Spinner, InputGroup, Form } from "react-bootstrap";
+import { Plus, Clipboard } from "react-bootstrap-icons";import { useRouter } from "next/navigation";
+import {
+  Card,
+  Button,
+  ListGroup,
+  Alert,
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
+import { PencilSquare } from "react-bootstrap-icons";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -14,6 +24,7 @@ type Team = {
   description: string;
   country: string;
   coachId: number;
+  members?: Member[];
 };
 
 type Member = {
@@ -26,25 +37,39 @@ type Member = {
 export default function TeamDetailPage() {
   const params = useParams<{ id: string }>();
   const teamId = params.id;
-    const router = useRouter();
+  const router = useRouter();
+  const [showInvite, setShowInvite] = useState(false);
+const [inviteCode, setInviteCode] = useState<string | null>(null);
+const [loadingInvite, setLoadingInvite] = useState(false);
 
   const [team, setTeam] = useState<Team | null>(null);
   const [members, setMembers] = useState<Member[]>([]);
   const [error, setError] = useState("");
+  const handleEdit = () => {
+    if (!team) return;
+    router.push(`/teams/${team.id}/edit`);
+  };
 
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const res = await fetch(`${API_URL}/teams/${teamId}`);
-
-        if (!res.ok) {
-          setError(await res.text());
+        const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const response = await fetch(`${API_URL}/teams/${teamId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (!response.ok) {
+          setError(await response.text());
           return;
         }
 
-        const data: Team = await res.json();
+        const data: Team = await response.json();
         setTeam(data);
-        // keď neskôr spravíš endpoint /teams/{id}/members, vieš tu dohnať aj členov
+        setMembers(data.members || []);
       } catch {
         setError("Server nie je dostupný");
       }
@@ -52,72 +77,186 @@ export default function TeamDetailPage() {
 
     if (teamId) fetchTeam();
   }, [teamId]);
+  const openInviteModal = async () => {
+  if (!team) return;
+
+  setShowInvite(true);
+  setLoadingInvite(true);
+  setInviteCode(null);
+  setError("");
+
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `${API_URL}/teams/${team.id}/invite`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      setError(await res.text());
+      setLoadingInvite(false);
+      return;
+    }
+
+    const data = await res.json();
+    setInviteCode(data.code);
+  } catch {
+    setError("Nepodarilo sa načítať pozývací kód");
+  } finally {
+    setLoadingInvite(false);
+  }
+};
 
   return (
-    <div className="team-layout">
-      <Sidebar selected="Tím" setSelected={() => {}} />
+    <>
+    <Container fluid className="p-0">
+      <Row>
+        <Col xs="auto" className="p-0">
+          <Sidebar selected="Tím" setSelected={() => {}} />
+        </Col>
 
-      <main className="team-main">
-        <header className="team-header-bar">
-          <h1 className="team-title">Detail tímu</h1>
-        </header>
+        <Col>
+          <h1 className="h3 mb-4">Detail tímu</h1>
 
-        <section className="team-card">
-          {error && <p className="team-error">{error}</p>}
-
-          {team && (
-            <>
-              <div className="team-field-row">
-        <div>
-          <h2 className="team-name">{team.name}</h2>
-          <p className="team-desc">{team.description}</p>
-        </div>
-        <button
-          type="button"
-          className="edit-icon-button"
-          onClick={() => router.push(`/teams/${team.id}/edit`)}
-        >
-          ✏️
-        </button>
-      </div>
-
-      <div className="team-field-row">
-        <p className="team-meta">Krajina: {team.country}</p>
-        <button
-          type="button"
-          className="edit-icon-button"
-          onClick={() => router.push(`/teams/${team.id}/edit`)}
-        >
-          ✏️
-        </button>
-      </div>
-
-      <div className="team-field-row">
-        <p className="team-meta">Tréner ID: {team.coachId}</p>
-        <button
-          type="button"
-          className="edit-icon-button"
-          onClick={() => router.push(`/teams/${team.id}/edit`)}
-        >
-          ✏️
-        </button>
-      </div>            </>
+          {error && (
+            <Alert variant="danger" className="mb-3">
+              {error}
+            </Alert>
           )}
 
-          {members.length > 0 && (
-            <>
-              <h3 className="team-members-title">Členovia tímu</h3>
-              <ul className="team-members-list">
-                {members.map((m) => (
-                  <li key={m.id} className="team-member-item">
-                    {m.name} – {m.role} ({m.email})
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
-      </main>
-    </div>
+          <Row className="justify-content-center">
+            <Col xs={12} md={10} lg={8}>
+              {team && (
+                <Card className="mb-4 shadow-sm">
+                  <Card.Header className="d-flex justify-content-between align-items-start">
+                    <div>
+                      <h5 className="mb-1">{team.name}</h5>
+                      <div className="text-muted small">{team.description}</div>
+                    </div>
+
+                    <Button
+                      variant="outline-primary"
+                      size="sm"
+                      onClick={handleEdit}
+                    >
+                      <PencilSquare />
+                    </Button>
+                  </Card.Header>
+
+                  <Card.Body>
+                    <Row className="mb-2">
+                      <Col md={4} className="fw-semibold">
+                        Krajina
+                      </Col>
+                      <Col md={8}>{team.country}</Col>
+                    </Row>
+
+                    <Row>
+                      <Col md={4} className="fw-semibold">
+                        Tréner
+                      </Col>
+                      <Col md={8}>{team.coachId}</Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              )}
+
+              {members.length > 0 && (
+                <Card className="shadow-sm">
+                  <Card.Header className="d-flex justify-content-between align-items-center">
+                    <strong>Členovia tímu</strong>
+
+                    <Button
+                      variant="outline-success"
+                      size="sm"
+                      onClick={openInviteModal}
+                    >
+                      <Plus className="me-1" />
+                      Pridať hráča
+                    </Button>
+                  </Card.Header>
+
+                  <ListGroup variant="flush">
+                    {members.map((m) => (
+                      <ListGroup.Item key={m.id}>
+                        <Row>
+                          <Col md={4} className="fw-semibold">
+                            {m.name}
+                          </Col>
+                          <Col md={4}>{m.role}</Col>
+                          <Col md={4} className="text-muted small">
+                            {m.email}
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    ))}
+                  </ListGroup>
+                </Card>
+              )}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+    <Modal
+  show={showInvite}
+  onHide={() => setShowInvite(false)}
+  centered
+>
+  <Modal.Header closeButton>
+    <Modal.Title>Pozvať hráča</Modal.Title>
+  </Modal.Header>
+
+  <Modal.Body>
+    {loadingInvite && (
+      <div className="text-center py-3">
+        <Spinner animation="border" />
+      </div>
+    )}
+
+    {!loadingInvite && inviteCode && (
+      <>
+        <p className="text-muted">
+          Pošli tento kód hráčovi. Kód je platný obmedzený čas.
+        </p>
+
+        <InputGroup>
+          <Form.Control
+            value={inviteCode}
+            readOnly
+            className="text-center fw-bold"
+          />
+          <Button
+            variant="outline-secondary"
+            onClick={() => navigator.clipboard.writeText(inviteCode)}
+          >
+            <Clipboard />
+          </Button>
+        </InputGroup>
+      </>
+    )}
+
+    {!loadingInvite && !inviteCode && (
+      <Alert variant="danger">
+        Nepodarilo sa získať pozývací kód.
+      </Alert>
+    )}
+  </Modal.Body>
+
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowInvite(false)}>
+      Zavrieť
+    </Button>
+  </Modal.Footer>
+</Modal>
+    </>
   );
+
 }
+

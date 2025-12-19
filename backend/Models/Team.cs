@@ -1,4 +1,4 @@
-﻿namespace FootballTeam.Models
+﻿namespace backend.Models
 {
     public class Team
     {
@@ -7,5 +7,7 @@
         public string Description { get; set; } = string.Empty;
         public int CoachId { get; set; }
         public string Country { get; set; } = string.Empty;
+        public ICollection<TeamUser> TeamUsers { get; set; } = new List<TeamUser>();
     }
 }
+

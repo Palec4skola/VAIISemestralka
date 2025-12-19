@@ -27,12 +27,20 @@ export default function EditTeamPage() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const res = await fetch(`${API_URL}/teams/${teamId}`);
-        if (!res.ok) {
-          setError(await res.text());
+const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const response = await fetch(`${API_URL}/teams/${teamId}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
+        if (!response.ok) {
+          setError(await response.text());
           return;
         }
-        const data: Team = await res.json();
+        const data: Team = await response.json();
         setForm(data);
       } catch {
         setError("Server nie je dostupný");
@@ -57,12 +65,14 @@ export default function EditTeamPage() {
     setSuccess("");
 
     try {
-      const res = await fetch(`${API_URL}/teams/${teamId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+      const token =
+          typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const response = await fetch(`${API_URL}/teams/${teamId}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
         body: JSON.stringify({
           name: form.name,
           description: form.description,
@@ -71,13 +81,12 @@ export default function EditTeamPage() {
         }),
       });
 
-      if (!res.ok) {
-        setError(await res.text());
+      if (!response.ok) {
+        setError(await response.text());
         return;
       }
 
       setSuccess("Tím bol upravený.");
-      // napr. späť na detail
       router.push(`/teams/${teamId}`);
     } catch {
       setError("Server nie je dostupný");

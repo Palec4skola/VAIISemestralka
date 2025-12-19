@@ -4,6 +4,7 @@ import Link from "next/link";
 import Sidebar from "@/components/Sidebar";
 import "@/styles/TrainingsPage.css";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type Training = {
   id: number;
@@ -12,41 +13,73 @@ type Training = {
   location: string;
   type: string;
   intensity: "Low" | "Medium" | "High";
-  note?: string;
+  description?: string;
 };
 
-const MOCK_TRAININGS: Training[] = [
-  {
-    id: 1,
-    date: "2024-12-10",
-    time: "18:00",
-    location: "Štadión Skolkari",
-    type: "Technický tréning",
-    intensity: "Medium",
-    note: "Zobrať tréningové lopty",
-  },
-  {
-    id: 2,
-    date: "2024-12-12",
-    time: "19:00",
-    location: "Umelá tráva",
-    type: "Kondičný tréning",
-    intensity: "High",
-    note: "Behy + intervaly",
-  },
-  {
-    id: 3,
-    date: "2024-12-15",
-    time: "17:30",
-    location: "Telocvičňa",
-    type: "Regeneračný tréning",
-    intensity: "Low",
-    note: "Strečing, core",
-  },
-];
+// const MOCK_TRAININGS: Training[] = [
+//   {
+//     id: 1,
+//     date: "2024-12-10",
+//     time: "18:00",
+//     location: "Štadión Skolkari",
+//     type: "Technický tréning",
+//     intensity: "Medium",
+//     note: "Zobrať tréningové lopty",
+//   },
+//   {
+//     id: 2,
+//     date: "2024-12-12",
+//     time: "19:00",
+//     location: "Umelá tráva",
+//     type: "Kondičný tréning",
+//     intensity: "High",
+//     note: "Behy + intervaly",
+//   },
+//   {
+//     id: 3,
+//     date: "2024-12-15",
+//     time: "17:30",
+//     location: "Telocvičňa",
+//     type: "Regeneračný tréning",
+//     intensity: "Low",
+//     note: "Strečing, core",
+//   },
+// ];
+  const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
 
 export default function TrainingsPage() {
-  const router = useRouter();
+    const router = useRouter();
+     const [trainings, setTrainings] = useState<Training[] | null>(null);
+    const [error, setError] = useState("");
+   
+
+    useEffect(() => {
+      const fetchTrainings = async () => {
+        try {
+           const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+            const response = await fetch(`${API_URL}/trainings`, {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                ...(token ? { Authorization: `Bearer ${token}` } : {})
+              },
+            });
+    
+          if (!response.ok) {
+            setError(await response .text());
+            return;
+          }
+    
+          const data: Training[] = await response .json(); // priamo pole
+          setTrainings(data);
+          // setMembers nepotrebuješ, endpoint žiadnych členov neposiela
+        } catch (e) {
+          setError("Server nie je dostupný");
+        }
+      };fetchTrainings();
+  }, []);
+
   return (
     <div className="trainings-layout">
       <Sidebar selected="Tréningy" setSelected={() => {}} />
@@ -58,7 +91,7 @@ export default function TrainingsPage() {
         </header>
 
         <section className="trainings-list">
-          {MOCK_TRAININGS.map((t) => (
+          {trainings?.map((t) => (
             <Link
               key={t.id}
               href={`/trainings/${t.id}`}
@@ -72,17 +105,17 @@ export default function TrainingsPage() {
                     </p>
                     <p className="training-type">{t.type}</p>
                   </div>
-                  <span
+                  {/* <span
                     className={`training-intensity ${t.intensity.toLowerCase()}`}
                   >
                     {t.intensity}
-                  </span>
+                  </span> */}
                 </div>
 
                 <p className="training-location">{t.location}</p>
 
-                {t.note && (
-                  <p className="training-note">Poznámka: {t.note}</p>
+                {t.description && (
+                  <p className="training-note">Poznámka: {t.description}</p>
                 )}
               </article>
             </Link>
