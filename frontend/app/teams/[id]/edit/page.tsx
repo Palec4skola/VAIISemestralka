@@ -3,7 +3,15 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/TeamPage.css";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Alert,
+} from "react-bootstrap";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -27,7 +35,7 @@ export default function EditTeamPage() {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-const token =
+        const token =
           typeof window !== "undefined" ? localStorage.getItem("token") : null;
         const response = await fetch(`${API_URL}/teams/${teamId}`, {
           method: "GET",
@@ -66,13 +74,13 @@ const token =
 
     try {
       const token =
-          typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const response = await fetch(`${API_URL}/teams/${teamId}`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
+        typeof window !== "undefined" ? localStorage.getItem("token") : null;
+      const response = await fetch(`${API_URL}/teams/${teamId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           name: form.name,
           description: form.description,
@@ -94,56 +102,74 @@ const token =
   };
 
   return (
-    <div className="team-layout">
+    <div className="d-flex min-vh-100">
+      {/* Sidebar - zachovávaš svoj */}
       <Sidebar selected="Tím" setSelected={() => {}} />
 
-      <main className="team-main">
-        <header className="team-header-bar">
-          <h1 className="team-title">Upraviť tím</h1>
+      {/* Main content */}
+      <main className="flex-grow-1">
+        <header className="bg-light border-bottom p-3">
+          <h1 className="h3 mb-0">Upraviť tím</h1>
         </header>
 
-        <section className="team-card">
-          {error && <p className="team-error">{error}</p>}
-          {success && <p className="team-success">{success}</p>}
-
-          {form && (
-            <form onSubmit={handleSubmit} className="team-form">
-              <div className="form-row">
-                <label htmlFor="name">Názov tímu</label>
-                <input
-                  id="name"
-                  type="text"
-                  value={form.name}
-                  onChange={handleChange("name")}
-                />
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="description">Popis</label>
-                <textarea
-                  id="description"
-                  rows={3}
-                  value={form.description}
-                  onChange={handleChange("description")}
-                />
-              </div>
-
-              <div className="form-row">
-                <label htmlFor="country">Krajina</label>
-                <input
-                  id="country"
-                  type="text"
-                  value={form.country}
-                  onChange={handleChange("country")}
-                />
-              </div>
-
-              <button type="submit" className="primary-button">
-                Uložiť zmeny
-              </button>
-            </form>
+        <Container className="py-4">
+          {/* Error/Success alerts */}
+          {error && (
+            <Alert variant="danger" className="mb-4">
+              {error}
+            </Alert>
           )}
-        </section>
+          {success && (
+            <Alert variant="success" className="mb-4">
+              {success}
+            </Alert>
+          )}
+
+          {/* Form card */}
+          {form && (
+            <Row className="justify-content-center">
+              <Col md={8} lg={6}>
+                <Card>
+                  <Card.Body>
+                    <Form onSubmit={handleSubmit}>
+                      <Form.Group className="mb-4" controlId="name">
+                        <Form.Label>Názov tímu</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={form.name}
+                          onChange={handleChange("name")}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-4" controlId="description">
+                        <Form.Label>Popis</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          value={form.description}
+                          onChange={handleChange("description")}
+                        />
+                      </Form.Group>
+
+                      <Form.Group className="mb-4" controlId="country">
+                        <Form.Label>Krajina</Form.Label>
+                        <Form.Control
+                          type="text"
+                          value={form.country}
+                          onChange={handleChange("country")}
+                        />
+                      </Form.Group>
+
+                      <Button type="submit" variant="primary" className="w-100">
+                        Uložiť zmeny
+                      </Button>
+                    </Form>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+        </Container>
       </main>
     </div>
   );

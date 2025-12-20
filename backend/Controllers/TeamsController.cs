@@ -31,13 +31,6 @@ namespace backend.Controllers
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
                 return Unauthorized();
 
-            // over, že user je člen tímu
-            var isMember = await _context.TeamUsers
-                .AnyAsync(tu => tu.TeamId == id && tu.UserId == userId);
-
-            if (!isMember)
-                return Forbid();
-
             var team = await _context.Teams
                 .Where(t => t.Id == id)
                 .Select(t => new
@@ -46,7 +39,13 @@ namespace backend.Controllers
                     t.Name,
                     t.Description,
                     t.Country,
-                    CoachId = t.CoachId,
+                    t.CoachId,
+
+                    // 🔥 rola prihláseného usera v tíme
+                    MyRole = t.TeamUsers
+                        .Where(tu => tu.UserId == userId)
+                        .Select(tu => tu.Role)
+                        .FirstOrDefault(),
 
                     Members = t.TeamUsers.Select(tu => new
                     {
@@ -61,6 +60,9 @@ namespace backend.Controllers
 
             if (team == null)
                 return NotFound();
+
+            if (team.MyRole == null)
+                return Forbid();
 
             return Ok(team);
         }
@@ -317,6 +319,46 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Successfully left the team." });
+        }
+        [Authorize]
+        [HttpPost("{teamId}/kick/{userId}")]
+        public async Task<IActionResult> KickPlayer(int teamId, int userId)
+        {
+            var callerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(callerIdClaim, out var callerId))
+                return Unauthorized();
+
+            // 1. over, že volajúci je coach v tíme
+            var isCoach = await _context.TeamUsers.AnyAsync(tu =>
+                tu.TeamId == teamId &&
+                tu.UserId == callerId &&
+                tu.Role == "Coach");
+
+            if (!isCoach)
+                return Forbid("Only coach can kick players.");
+
+            // 2. coach nemôže kicknúť sám seba
+            if (callerId == userId)
+                return BadRequest("You cannot kick yourself.");
+
+            // 3. nájdi cieľového usera v tíme
+            var targetMembership = await _context.TeamUsers
+                .FirstOrDefaultAsync(tu =>
+                    tu.TeamId == teamId &&
+                    tu.UserId == userId);
+
+            if (targetMembership == null)
+                return NotFound("User is not a member of this team.");
+
+            // 4. zakáž kick iného coacha
+            if (targetMembership.Role == "Coach")
+                return BadRequest("You cannot kick another coach.");
+
+            _context.TeamUsers.Remove(targetMembership);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Player kicked from team." });
         }
 
     }

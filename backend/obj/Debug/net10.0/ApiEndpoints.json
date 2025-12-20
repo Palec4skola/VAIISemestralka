@@ -132,6 +132,27 @@
   },
   {
     "ContainingType": "backend.Controllers.TeamsController",
+    "Method": "KickPlayer",
+    "RelativePath": "Teams/{teamId}/kick/{userId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teamId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "userId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "backend.Controllers.TeamsController",
     "Method": "LeaveTeam",
     "RelativePath": "Teams/{teamId}/leave",
     "HttpMethod": "POST",

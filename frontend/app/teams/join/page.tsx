@@ -3,7 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import { Container, Row, Col, Card, Form, Button, Alert, InputGroup } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Form,
+  Button,
+  Alert,
+  InputGroup,
+} from "react-bootstrap";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
@@ -29,7 +38,7 @@ export default function JoinTeamPage() {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify( code ),
+        body: JSON.stringify(code),
       });
 
       if (!res.ok) {
@@ -41,14 +50,11 @@ export default function JoinTeamPage() {
 
       const data = await res.json();
       setMessage("Úspešne si sa pripojil k tímu! 🎉");
-
-      // prípadne redirect na detail tímu
-      // router.push(`/teams/${data.teamId}`);
     } catch {
       setMessage("Server nie je dostupný");
     } finally {
       setLoading(false);
-      router.push('/home');
+      router.push("/home");
     }
   };
 
@@ -64,7 +70,9 @@ export default function JoinTeamPage() {
             <Col xs={12} md={6} lg={4}>
               <Card className="shadow-sm">
                 <Card.Body>
-                  <Card.Title className="mb-2 text-center">Pripojiť sa k tímu</Card.Title>
+                  <Card.Title className="mb-2 text-center">
+                    Pripojiť sa k tímu
+                  </Card.Title>
                   <Card.Text className="text-muted text-center mb-4">
                     Zadaj 4-miestny kód, ktorý si dostal od trénera
                   </Card.Text>
