@@ -201,32 +201,6 @@
   },
   {
     "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "GetMyUpcoming",
-    "RelativePath": "Trainings",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "Get",
-    "RelativePath": "Trainings/{id}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "id",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "FootballTeam.Controllers.TrainingsController",
     "Method": "Update",
     "RelativePath": "Trainings/{id}",
     "HttpMethod": "PUT",
@@ -264,8 +238,8 @@
   },
   {
     "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "Create",
-    "RelativePath": "Trainings/create",
+    "Method": "CreateTraining",
+    "RelativePath": "Trainings/{teamId}/create",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
@@ -273,6 +247,11 @@
       {
         "Name": "dto",
         "Type": "backend.DTO.TrainingDto",
+        "IsRequired": true
+      },
+      {
+        "Name": "teamId",
+        "Type": "System.Int32",
         "IsRequired": true
       }
     ],

@@ -327,14 +327,14 @@
         }
       }
     },
-    "/Trainings/{id}": {
-      "get": {
+    "/Trainings/{teamId}/create": {
+      "post": {
         "tags": [
           "Trainings"
         ],
         "parameters": [
           {
-            "name": "id",
+            "name": "teamId",
             "in": "path",
             "required": true,
             "schema": {
@@ -343,12 +343,33 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrainingDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
           }
         }
-      },
+      }
+    },
+    "/Trainings/{id}": {
       "put": {
         "tags": [
           "Trainings"
@@ -404,49 +425,6 @@
             }
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/Trainings": {
-      "get": {
-        "tags": [
-          "Trainings"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/Trainings/create": {
-      "post": {
-        "tags": [
-          "Trainings"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
