@@ -16,7 +16,7 @@ export default function TeamInfoCard({ team, onEdit }: Props) {
           <small className="text-muted">{team.description}</small>
         </div>
 
-        {team.myRole === "Coach" && (
+        {team.role === "Coach" && (
           <Button size="sm" variant="outline-primary" onClick={onEdit}>
             <PencilSquare />
           </Button>

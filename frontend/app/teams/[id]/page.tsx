@@ -28,15 +28,14 @@ export default function TeamDetailPage() {
   };
 
   const openInvite = async () => {
-    setShowInvite(true);      
-    await invite.generate();  
+    setShowInvite(true);
+    await invite.generate();
   };
 
   const closeInvite = () => {
     setShowInvite(false);
     invite.reset();
   };
-  
 
   if (loading) return <Container className="p-4">Načítavam…</Container>;
 
@@ -52,7 +51,7 @@ export default function TeamDetailPage() {
     <Container fluid className="p-0">
       <Row>
         <Col xs="auto" className="p-0">
-          <Sidebar selected="Tím" setSelected={() => {}} />
+          <Sidebar />
         </Col>
 
         <Col className="p-4">
@@ -66,7 +65,7 @@ export default function TeamDetailPage() {
 
           <TeamMembersList
             members={team.members ?? []}
-            isCoach={team.myRole === "Coach"}
+            isCoach={team.role === "Coach"}
             onInvite={openInvite}
             onKick={handleKick}
           />

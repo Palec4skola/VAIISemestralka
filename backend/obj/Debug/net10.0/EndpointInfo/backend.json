@@ -327,7 +327,92 @@
         }
       }
     },
-    "/Trainings/{teamId}/create": {
+    "/Trainings/upcoming": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingListItemDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingListItemDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Trainings/{teamId}": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingListItemDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingListItemDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrainingListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "tags": [
           "Trainings"
@@ -347,17 +432,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
+                "$ref": "#/components/schemas/Training"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
+                "$ref": "#/components/schemas/Training"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
+                "$ref": "#/components/schemas/Training"
               }
             }
           }
@@ -389,17 +474,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
+                "$ref": "#/components/schemas/Training"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
+                "$ref": "#/components/schemas/Training"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/TrainingDto"
+                "$ref": "#/components/schemas/Training"
               }
             }
           }
@@ -428,6 +513,46 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/Trainings/{id}/detail": {
+      "get": {
+        "tags": [
+          "Trainings"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrainingDetailDto"
+                }
+              }
+            }
           }
         }
       }
@@ -493,9 +618,13 @@
         },
         "additionalProperties": false
       },
-      "TrainingDto": {
+      "Training": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -509,6 +638,78 @@
             "format": "int32"
           },
           "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrainingDetailDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "teamName": {
+            "type": "string",
+            "nullable": true
+          },
+          "myRole": {
+            "type": "string",
+            "nullable": true
+          },
+          "myAttendanceStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "myAbsenceReason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrainingListItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "teamName": {
             "type": "string",
             "nullable": true
           }

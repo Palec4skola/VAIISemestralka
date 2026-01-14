@@ -32,7 +32,7 @@ export default function TrainingDetailPage() {
 
   return (
     <div className="trainings-layout">
-      <Sidebar selected="Tréningy" setSelected={() => {}} />
+      <Sidebar />
 
       <main className="trainings-main">
         <header className="trainings-header">
@@ -47,26 +47,16 @@ export default function TrainingDetailPage() {
               </p>
               <h2 className="training-type">{t.type}</h2>
             </div>
-            <span
-              className={`training-intensity ${t.intensity.toLowerCase()}`}
-            >
+            <span className={`training-intensity ${t.intensity.toLowerCase()}`}>
               {t.intensity}
             </span>
           </div>
 
           <p className="training-location">Miesto: {t.location}</p>
-          <p className="training-location">
-            Tréner: {t.coachName}
-          </p>
-          <p className="training-location">
-            Trvanie: {t.durationMinutes} min
-          </p>
+          <p className="training-location">Tréner: {t.coachName}</p>
+          <p className="training-location">Trvanie: {t.durationMinutes} min</p>
 
-          {t.note && (
-            <p className="training-note">
-              Poznámka: {t.note}
-            </p>
-          )}
+          {t.note && <p className="training-note">Poznámka: {t.note}</p>}
         </section>
       </main>
     </div>

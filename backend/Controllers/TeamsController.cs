@@ -42,7 +42,7 @@ namespace backend.Controllers
                     t.CoachId,
 
                     // 🔥 rola prihláseného usera v tíme
-                    MyRole = t.TeamUsers
+                    Role = t.TeamUsers
                         .Where(tu => tu.UserId == userId)
                         .Select(tu => tu.Role)
                         .FirstOrDefault(),
@@ -61,7 +61,7 @@ namespace backend.Controllers
             if (team == null)
                 return NotFound();
 
-            if (team.MyRole == null)
+            if (team.Role == null)
                 return Forbid();
 
             return Ok(team);
@@ -74,7 +74,6 @@ namespace backend.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            // Require authenticated user and extract id from JWT claims.
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                               
 
@@ -206,15 +205,12 @@ namespace backend.Controllers
         [HttpPost("join")]
         public async Task<IActionResult> JoinTeamByCode([FromBody] string code)
         {
-            // 1️⃣ Získaj userId z JWT
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
                 return Unauthorized();
 
-            // 2️⃣ Normalizuj kód (istota)
             code = code.Trim().ToUpper();
 
-            // 3️⃣ Nájde aktívny kód
             var invite = await _context.TeamInviteCodes
                 .FirstOrDefaultAsync(c =>
                     c.Code == code &&
@@ -223,11 +219,9 @@ namespace backend.Controllers
             if (invite == null)
                 return BadRequest("Invalid or inactive invite code.");
 
-            // 4️⃣ Skontroluj expiráciu
             if (invite.ExpiresAt != null && invite.ExpiresAt < DateTime.UtcNow)
                 return BadRequest("Invite code has expired.");
 
-            // 5️⃣ Skontroluj, či user už nie je v tíme
             var alreadyMember = await _context.TeamUsers.AnyAsync(tu =>
                 tu.TeamId == invite.TeamId &&
                 tu.UserId == userId);
@@ -235,7 +229,6 @@ namespace backend.Controllers
             if (alreadyMember)
                 return BadRequest("You are already a member of this team.");
 
-            // 6️⃣ Pridaj usera do tímu
             var teamUser = new TeamUser
             {
                 TeamId = invite.TeamId,
@@ -273,7 +266,7 @@ namespace backend.Controllers
                 .Select(tu => new
                 {
                     TeamId = tu.Team.Id,
-                    TeamName = tu.Team.Name,
+                    Name = tu.Team.Name,
                     Description = tu.Team.Description,
                     Country = tu.Team.Country,
                     Role = tu.Role,
@@ -328,7 +321,7 @@ namespace backend.Controllers
             if (!int.TryParse(callerIdClaim, out var callerId))
                 return Unauthorized();
 
-            // 1. over, že volajúci je coach v tíme
+            //  over, že volajúci je coach v tíme
             var isCoach = await _context.TeamUsers.AnyAsync(tu =>
                 tu.TeamId == teamId &&
                 tu.UserId == callerId &&
@@ -337,11 +330,10 @@ namespace backend.Controllers
             if (!isCoach)
                 return Forbid("Only coach can kick players.");
 
-            // 2. coach nemôže kicknúť sám seba
+            // coach nemôže kicknúť sám seba
             if (callerId == userId)
                 return BadRequest("You cannot kick yourself.");
 
-            // 3. nájdi cieľového usera v tíme
             var targetMembership = await _context.TeamUsers
                 .FirstOrDefaultAsync(tu =>
                     tu.TeamId == teamId &&
@@ -350,7 +342,7 @@ namespace backend.Controllers
             if (targetMembership == null)
                 return NotFound("User is not a member of this team.");
 
-            // 4. zakáž kick iného coacha
+            // zakáž kick iného coacha
             if (targetMembership.Role == "Coach")
                 return BadRequest("You cannot kick another coach.");
 

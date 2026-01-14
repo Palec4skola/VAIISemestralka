@@ -6,6 +6,6 @@ export type Team = {
   description: string;
   country: string;
   coachId?: number;
-  myRole?: string;
+  role?: string;
   members?: Member[];
 };

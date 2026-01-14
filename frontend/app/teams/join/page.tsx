@@ -62,7 +62,7 @@ export default function JoinTeamPage() {
     <Container fluid className="p-0">
       <Row>
         <Col xs="auto" className="p-0">
-          <Sidebar selected="Tím" setSelected={() => {}} />
+          <Sidebar />
         </Col>
 
         <Col>

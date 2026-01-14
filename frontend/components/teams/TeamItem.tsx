@@ -14,12 +14,13 @@ export default function TeamItem({ team, onDelete }: Props) {
   return (
     <Row className="align-items-center">
       <Col role="button" onClick={() => router.push(`/teams/${team.teamId}`)}>
-        <div className="fw-semibold">{team.teamName}</div>
+        <div className="fw-semibold">{team.name}</div>
         <div className="text-muted small">{team.description}</div>
         <div className="text-muted small">Krajina: {team.country}</div>
       </Col>
 
       <Col xs="auto">
+      {team.role === "Coach" ? (
         <Button
           variant="outline-danger"
           size="sm"
@@ -27,6 +28,7 @@ export default function TeamItem({ team, onDelete }: Props) {
         >
           <Trash />
         </Button>
+     ) : null}
       </Col>
     </Row>
   );

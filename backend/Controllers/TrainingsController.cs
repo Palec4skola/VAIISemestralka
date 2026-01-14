@@ -1,9 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Claims;
-using System.Threading.Tasks;
+﻿using System.Security.Claims;
 using backend.DTO;
 using backend.Models;
 using FootballTeam.Data;
@@ -23,67 +18,185 @@ namespace FootballTeam.Controllers
         {
             _context = context;
         }
+
         [Authorize]
-        [HttpPost("{teamId}/create")]
-        public async Task<IActionResult> CreateTraining([FromBody] TrainingDto dto, int teamId)
+        [HttpGet("upcoming")]
+        public async Task<ActionResult<List<TrainingListItemDto>>> GetUpcoming() {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+            var fromUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Local).ToUniversalTime();
+
+            var items = await (
+                from tu in _context.TeamUsers
+                join t in _context.Trainings on tu.TeamId equals t.TeamId
+                join team in _context.Teams on t.TeamId equals team.Id
+                where tu.UserId == userId && t.Date >= fromUtc
+                orderby t.Date
+                select new TrainingListItemDto(
+                    t.Id, t.Date, t.Location, t.Description, t.TeamId, team.Name
+                )
+            ).ToListAsync();
+                       
+            return Ok(items);
+        }
+
+        [Authorize]
+        [HttpGet("{teamId:int}")]
+        public async Task<ActionResult<List<TrainingListItemDto>>> GetTeamTrainings(int teamId)
         {
-            // Získaj userId z JWT
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+            var time = DateTime.UtcNow.Date;
+
+            // over, že user je člen tímu (M:N)
+            var isMember = await _context.TeamUsers.AnyAsync(x => x.TeamId == teamId && x.UserId == userId);
+            if (!isMember) return Forbid();
+
+            var teamName = await _context.Teams
+                .Where(x => x.Id == teamId)
+                .Select(x => x.Name)
+                .FirstAsync();
+
+            var items = await _context.Trainings
+                .Where(t => t.TeamId == teamId && t.Date >= time)
+                .OrderBy(t => t.Date)
+                .Select(t => new TrainingListItemDto(
+                    t.Id, t.Date, t.Location, t.Description, t.TeamId, teamName
+                ))
+                .ToListAsync();
+
+            return Ok(items);
+        }
+
+        [Authorize]
+        [HttpPost("{teamId:int}")]
+        public async Task<IActionResult> CreateTraining(int teamId, [FromBody] Training dto)
+        {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
                 return Unauthorized();
 
-            // Over, že user je Coach v tíme
-            var isCoach = await _context.TeamUsers.AnyAsync(tu =>
-                tu.TeamId == teamId &&
-                tu.UserId == userId &&
-                tu.Role == "Coach");
+            // over coach rolu v TeamUser
+            var isCoach = await _context.TeamUsers.AnyAsync(x =>
+                x.TeamId == teamId && x.UserId == userId && x.Role == "Coach");
 
-            if (!isCoach)
-                return Forbid("Only coach can generate invite codes.");
+            if (!isCoach) return Forbid();
 
             var training = new Training
             {
-                Date = dto.Date,
-                Location = dto.Location ?? string.Empty,
                 TeamId = teamId,
-                Description = dto.Description ?? string.Empty
+                Date = EnsureUtc(dto.Date),
+                Location = dto.Location,
+                Description = dto.Description
             };
 
             _context.Trainings.Add(training);
             await _context.SaveChangesAsync();
-            return Ok(dto);
+
+            return Ok(training.Id);
         }
 
-        // PUT: /api/trainings/{id}
+        [Authorize]
         [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update(int id, [FromBody] TrainingDto dto)
+        public async Task<IActionResult> UpdateTraining(int id, [FromBody] Training dto)
         {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
 
-            var training = await _context.Trainings.FindAsync(id);
+            var training = await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
             if (training == null) return NotFound();
 
-            training.Date = dto.Date;
-            training.Location = dto.Location ?? string.Empty;
-            training.TeamId = dto.TeamId;
-            training.Description = dto.Description ?? string.Empty;
+            var isCoach = await _context.TeamUsers.AnyAsync(x =>
+                x.TeamId == training.TeamId && x.UserId == userId && x.Role == "Coach");
+            if (!isCoach) return Forbid();
 
-            _context.Trainings.Update(training);
+            training.Date = EnsureUtc(dto.Date);
+            training.Location = dto.Location;
+            training.Description = dto.Description;
+
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
-        // DELETE: /api/trainings/{id}
+        [Authorize]
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteTraining(int id)
         {
-            var training = await _context.Trainings.FindAsync(id);
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            var training = await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
             if (training == null) return NotFound();
+
+            var isCoach = await _context.TeamUsers.AnyAsync(x =>
+                x.TeamId == training.TeamId && x.UserId == userId && x.Role == "Coach");
+            if (!isCoach) return Forbid();
 
             _context.Trainings.Remove(training);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+        [Authorize]
+        [HttpGet("{id:int}/detail")]
+        public async Task<ActionResult<TrainingDetailDto>> GetTrainingDetail(int id)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                return Unauthorized();
+
+            // nájdi tréning + over členstvo v tíme + zisti teamName a rolu
+            var data = await (
+                from t in _context.Trainings
+                join team in _context.Teams on t.TeamId equals team.Id
+                join tu in _context.TeamUsers on team.Id equals tu.TeamId
+                where t.Id == id && tu.UserId == userId
+                select new
+                {
+                    Training = t,
+                    TeamName = team.Name,
+                    MyRole = tu.Role
+                }
+            ).FirstOrDefaultAsync();
+
+            if (data == null)
+                return NotFound(); // alebo Forbid(), ale NotFound je OK
+
+            // moja dochádzka na tento tréning
+            var myAttendance = await _context.Attendances
+                .Where(a =>
+                    a.UserId == userId &&
+                    a.EventType == "Training" &&
+                    a.EventId == id)
+                .Select(a => new { a.Status, a.AbsenceReason })
+                .FirstOrDefaultAsync();
+
+            return Ok(new TrainingDetailDto(
+                data.Training.Id,
+                data.Training.Date,
+                data.Training.Location,
+                data.Training.Description,
+                data.Training.TeamId,
+                data.TeamName,
+                data.MyRole,
+                myAttendance?.Status,
+                myAttendance?.AbsenceReason
+            ));
+        }
+
+
+        static DateTime EnsureUtc(DateTime dt)
+        {
+            return dt.Kind switch
+            {
+                DateTimeKind.Utc => dt,
+                DateTimeKind.Local => dt.ToUniversalTime(),
+                DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc), // pozri poznámku nižšie
+                _ => DateTime.SpecifyKind(dt, DateTimeKind.Utc)
+            };
         }
     }
 }

@@ -8,12 +8,13 @@ import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 
 export default function EditTeamPage() {
   const params = useParams<{ id: string }>();
-  const { team, loading, error, success, updateField, submit } =
-    useEditTeam(params.id);
+  const { team, loading, error, success, updateField, submit } = useEditTeam(
+    params.id
+  );
 
   return (
     <div className="d-flex min-vh-100">
-      <Sidebar selected="Tím" setSelected={() => {}} />
+      <Sidebar />
 
       <main className="flex-grow-1">
         <header className="bg-light border-bottom p-3">

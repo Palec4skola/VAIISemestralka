@@ -201,7 +201,7 @@
   },
   {
     "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "Update",
+    "Method": "UpdateTraining",
     "RelativePath": "Trainings/{id}",
     "HttpMethod": "PUT",
     "IsController": true,
@@ -214,7 +214,7 @@
       },
       {
         "Name": "dto",
-        "Type": "backend.DTO.TrainingDto",
+        "Type": "backend.Models.Training",
         "IsRequired": true
       }
     ],
@@ -222,7 +222,7 @@
   },
   {
     "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "Delete",
+    "Method": "DeleteTraining",
     "RelativePath": "Trainings/{id}",
     "HttpMethod": "DELETE",
     "IsController": true,
@@ -238,23 +238,95 @@
   },
   {
     "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "CreateTraining",
-    "RelativePath": "Trainings/{teamId}/create",
-    "HttpMethod": "POST",
+    "Method": "GetTrainingDetail",
+    "RelativePath": "Trainings/{id}/detail",
+    "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "dto",
-        "Type": "backend.DTO.TrainingDto",
+        "Name": "id",
+        "Type": "System.Int32",
         "IsRequired": true
-      },
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "backend.DTO.TrainingDetailDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "GetTeamTrainings",
+    "RelativePath": "Trainings/{teamId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
         "Name": "teamId",
         "Type": "System.Int32",
         "IsRequired": true
       }
     ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTO.TrainingListItemDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "CreateTraining",
+    "RelativePath": "Trainings/{teamId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "teamId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "backend.Models.Training",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "GetUpcoming",
+    "RelativePath": "Trainings/upcoming",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTO.TrainingListItemDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   }
 ]

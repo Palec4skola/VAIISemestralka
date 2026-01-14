@@ -7,6 +7,19 @@ import {
   validateRequiredDescription,
 } from "@/lib/validation";
 import { Container, Card, Form, Button } from "react-bootstrap";
+const COUNTRIES = [
+  "Slovensko",
+  "Česko",
+  "Poľsko",
+  "Maďarsko",
+  "Rakúsko",
+  "Nemecko",
+  "Taliansko",
+  "Francúzsko",
+  "Španielsko",
+  "Anglicko",
+];
+
 export default function CreatePage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -76,12 +89,18 @@ export default function CreatePage() {
 
             <Form.Group className="mb-3" controlId="teamCountry">
               <Form.Label>Krajina</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Krajina"
+              <Form.Select
                 value={country}
                 onChange={(e) => setCountry(e.target.value)}
-              />
+              >
+                <option value="">-- Vyber krajinu --</option>
+
+                {COUNTRIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
 
             {error && <div className="text-danger mb-3">{error}</div>}
