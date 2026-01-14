@@ -12,7 +12,7 @@ export default function TeamInfoCard({ team, onEdit }: Props) {
     <Card className="mb-4 shadow-sm">
       <Card.Header className="d-flex justify-content-between">
         <div>
-          <h5>{team.teamName}nejde mi nazov????????????????????????</h5>
+          <h5>{team.name}</h5>
           <small className="text-muted">{team.description}</small>
         </div>
 

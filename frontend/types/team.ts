@@ -2,7 +2,7 @@ import { Member } from "./member";
 
 export type Team = {
   teamId: number;
-  teamName: string;
+  name: string;
   description: string;
   country: string;
   coachId?: number;

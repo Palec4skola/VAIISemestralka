@@ -129,7 +129,6 @@ namespace backend.Controllers
             team.Name = dto.Name ?? team.Name;
             team.Description = dto.Description ?? team.Description;
             team.Country = dto.Country ?? team.Country;
-            team.CoachId = dto.CoachId;
 
             _context.Teams.Update(team);
             await _context.SaveChangesAsync();

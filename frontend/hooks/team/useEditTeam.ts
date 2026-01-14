@@ -9,7 +9,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 export function useEditTeam(teamId: string) {
   const router = useRouter();
 
-  const [form, setForm] = useState<Team | null>(null);
+  const [team, setTeam] = useState<Team | null>(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,7 @@ export function useEditTeam(teamId: string) {
         }
 
         const data: Team = await res.json();
-        setForm(data);
+        setTeam(data);
       } catch {
         setError("Server nie je dostupný");
       } finally {
@@ -42,12 +42,12 @@ export function useEditTeam(teamId: string) {
   }, [teamId]);
 
   const updateField = (field: keyof Team, value: string) => {
-    if (!form) return;
-    setForm({ ...form, [field]: value });
+    if (!team) return;
+    setTeam({ ...team, [field]: value });
   };
 
   const submit = async () => {
-    if (!form) return;
+    if (!team) return;
 
     setError("");
     setSuccess("");
@@ -62,9 +62,9 @@ export function useEditTeam(teamId: string) {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          name: form.teamName,
-          description: form.description,
-          country: form.country,
+          name: team.name,
+          description: team.description,
+          country: team.country,
         }),
       });
 
@@ -81,7 +81,7 @@ export function useEditTeam(teamId: string) {
   };
 
   return {
-    form,
+    team,
     loading,
     error,
     success,

@@ -3,12 +3,12 @@
 import { useParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import EditTeamForm from "@/components/teams/EditTeamForm";
-import { useEditTeam } from "@/hooks/useEditTeam";
+import { useEditTeam } from "@/hooks/team/useEditTeam";
 import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 
 export default function EditTeamPage() {
   const params = useParams<{ id: string }>();
-  const { form, loading, error, success, updateField, submit } =
+  const { team, loading, error, success, updateField, submit } =
     useEditTeam(params.id);
 
   return (
@@ -26,11 +26,11 @@ export default function EditTeamPage() {
 
           {loading && <Spinner />}
 
-          {form && (
+          {team && (
             <Row className="justify-content-center">
               <Col md={8} lg={6}>
                 <EditTeamForm
-                  form={form}
+                  team={team}
                   onChange={updateField}
                   onSubmit={submit}
                 />

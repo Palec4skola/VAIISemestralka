@@ -2,12 +2,12 @@ import { Card, Form, Button } from "react-bootstrap";
 import { Team } from "@/types/team";
 
 type Props = {
-  form: Team;
+  team: Team;
   onChange: (field: keyof Team, value: string) => void;
   onSubmit: () => void;
 };
 
-export default function EditTeamForm({ form, onChange, onSubmit }: Props) {
+export default function EditTeamForm({ team, onChange, onSubmit }: Props) {
   return (
     <Card>
       <Card.Body>
@@ -20,9 +20,9 @@ export default function EditTeamForm({ form, onChange, onSubmit }: Props) {
           <Form.Group className="mb-4">
             <Form.Label>Názov tímu</Form.Label>
             <Form.Control
-            placeholder= "zase tu nejde nazov"//{form.teamName}
-              value={form.teamName}
-              onChange={(e) => onChange("teamName", e.target.value)}
+            placeholder= {team.name}
+              value={team.name}
+              onChange={(e) => onChange("name", e.target.value)}
             />
           </Form.Group>
 
@@ -31,7 +31,7 @@ export default function EditTeamForm({ form, onChange, onSubmit }: Props) {
             <Form.Control
               as="textarea"
               rows={3}
-              value={form.description}
+              value={team.description}
               onChange={(e) => onChange("description", e.target.value)}
             />
           </Form.Group>
@@ -39,7 +39,7 @@ export default function EditTeamForm({ form, onChange, onSubmit }: Props) {
           <Form.Group className="mb-4">
             <Form.Label>Krajina</Form.Label>
             <Form.Control
-              value={form.country}
+              value={team.country}
               onChange={(e) => onChange("country", e.target.value)}
             />
           </Form.Group>

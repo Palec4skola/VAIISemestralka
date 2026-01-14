@@ -2,7 +2,7 @@
 import { Alert, Col, Container, Row } from "react-bootstrap";
 import Sidebar from "@/components/Sidebar";
 import TeamList from "@/components/teams/TeamList";
-import { useTeams } from "@/hooks/useTeams";
+import { useTeams } from "@/hooks/team/useTeams";
 
 export default function TeamPage() {
   const { teams, error, deleteTeam } = useTeams();
