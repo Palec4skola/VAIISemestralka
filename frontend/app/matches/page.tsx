@@ -53,7 +53,7 @@ export default function MatchesPage() {
     const router = useRouter();
   return (
     <div className="matches-layout">
-      <Sidebar selected="Zápasy" setSelected={() => {}} />
+      <Sidebar  />
 
       <main className="matches-main">
         <header className="matches-header">

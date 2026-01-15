@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using backend.DTO;
 using FootballTeam.Data;
 using backend.Models;
@@ -23,9 +22,8 @@ namespace backend.Controllers
             _context = context;
         }
 
-        // POST: auth/register
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto request)
+        public async Task<IActionResult> Register([FromBody] AuthDtos request)
         {
             if (string.IsNullOrWhiteSpace(request?.Email) || string.IsNullOrWhiteSpace(request?.Password) || string.IsNullOrWhiteSpace(request?.Name))
                 return BadRequest("Name, email and password are required.");
@@ -53,7 +51,6 @@ namespace backend.Controllers
             return Ok(new { message = "User registered successfully", user = new { user.Id, user.Name, user.Email, user.Role } });
         }
 
-        // POST: auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -116,7 +113,6 @@ namespace backend.Controllers
         }
 
 
-        // Jednoduchá hashovacia funkcia (SHA256)
         private string HashPassword(string password)
         {
             using var sha256 = SHA256.Create();
@@ -126,6 +122,6 @@ namespace backend.Controllers
         }
     }
 
-    // DTO pre registráciu
+    
     
 }

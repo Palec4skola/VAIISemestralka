@@ -27,9 +27,7 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> GetTeamDetail(int id)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             var team = await _context.Teams
                 .Where(t => t.Id == id)
@@ -74,13 +72,7 @@ namespace backend.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                              
-
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var coachId))
-            {
-                return Unauthorized();
-            }
+            var coachId = GetUserId();
 
             var newTeam = new Team
             {
@@ -152,10 +144,7 @@ namespace backend.Controllers
         [HttpPost("{teamId}/invite")]
         public async Task<IActionResult> GenerateInviteCode(int teamId)
         {
-            // 1️⃣ Získaj userId z JWT
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             // 2️⃣ Over, že user je Coach v tíme
             var isCoach = await _context.TeamUsers.AnyAsync(tu =>
@@ -205,9 +194,7 @@ namespace backend.Controllers
         [HttpPost("join")]
         public async Task<IActionResult> JoinTeamByCode([FromBody] string code)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             code = code.Trim().ToUpper();
 
@@ -256,10 +243,7 @@ namespace backend.Controllers
         [Authorize]
         public async Task<IActionResult> GetMyTeams()
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             var teams = await _context.TeamUsers
                 .Where(tu => tu.UserId == userId)
@@ -281,10 +265,7 @@ namespace backend.Controllers
         [HttpPost("{teamId}/leave")]
         public async Task<IActionResult> LeaveTeam(int teamId)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (!int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             // nájdi členstvo
             var membership = await _context.TeamUsers
@@ -316,10 +297,7 @@ namespace backend.Controllers
         [HttpPost("{teamId}/kick/{userId}")]
         public async Task<IActionResult> KickPlayer(int teamId, int userId)
         {
-            var callerIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            if (!int.TryParse(callerIdClaim, out var callerId))
-                return Unauthorized();
+            var callerId = GetUserId();
 
             //  over, že volajúci je coach v tíme
             var isCoach = await _context.TeamUsers.AnyAsync(tu =>
@@ -350,6 +328,14 @@ namespace backend.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Player kicked from team." });
+        }
+
+        private int GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                throw new UnauthorizedAccessException("Invalid token (missing user id).");
+            return userId;
         }
 
     }

@@ -22,9 +22,7 @@ namespace FootballTeam.Controllers
         [Authorize]
         [HttpGet("upcoming")]
         public async Task<ActionResult<List<TrainingListItemDto>>> GetUpcoming() {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
             var fromUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Local).ToUniversalTime();
 
             var items = await (
@@ -45,9 +43,7 @@ namespace FootballTeam.Controllers
         [HttpGet("{teamId:int}")]
         public async Task<ActionResult<List<TrainingListItemDto>>> GetTeamTrainings(int teamId)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
             var time = DateTime.UtcNow.Date;
 
             // over, že user je člen tímu (M:N)
@@ -74,9 +70,7 @@ namespace FootballTeam.Controllers
         [HttpPost("{teamId:int}")]
         public async Task<IActionResult> CreateTraining(int teamId, [FromBody] Training dto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             // over coach rolu v TeamUser
             var isCoach = await _context.TeamUsers.AnyAsync(x =>
@@ -102,9 +96,7 @@ namespace FootballTeam.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> UpdateTraining(int id, [FromBody] Training dto)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             var training = await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
             if (training == null) return NotFound();
@@ -125,9 +117,7 @@ namespace FootballTeam.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteTraining(int id)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             var training = await _context.Trainings.FirstOrDefaultAsync(t => t.Id == id);
             if (training == null) return NotFound();
@@ -144,9 +134,7 @@ namespace FootballTeam.Controllers
         [HttpGet("{id:int}/detail")]
         public async Task<ActionResult<TrainingDetailDto>> GetTrainingDetail(int id)
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
-                return Unauthorized();
+            var userId = GetUserId();
 
             // nájdi tréning + over členstvo v tíme + zisti teamName a rolu
             var data = await (
@@ -157,8 +145,8 @@ namespace FootballTeam.Controllers
                 select new
                 {
                     Training = t,
-                    TeamName = team.Name,
-                    MyRole = tu.Role
+                    Name = team.Name,
+                    Role = tu.Role
                 }
             ).FirstOrDefaultAsync();
 
@@ -180,15 +168,15 @@ namespace FootballTeam.Controllers
                 data.Training.Location,
                 data.Training.Description,
                 data.Training.TeamId,
-                data.TeamName,
-                data.MyRole,
+                data.Name,
+                data.Role,
                 myAttendance?.Status,
                 myAttendance?.AbsenceReason
             ));
         }
 
 
-        static DateTime EnsureUtc(DateTime dt)
+        private DateTime EnsureUtc(DateTime dt)
         {
             return dt.Kind switch
             {
@@ -197,6 +185,14 @@ namespace FootballTeam.Controllers
                 DateTimeKind.Unspecified => DateTime.SpecifyKind(dt, DateTimeKind.Utc), // pozri poznámku nižšie
                 _ => DateTime.SpecifyKind(dt, DateTimeKind.Utc)
             };
+        }
+
+        private int GetUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrWhiteSpace(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+                throw new UnauthorizedAccessException("Invalid token (missing user id).");
+            return userId;
         }
     }
 }

@@ -36,7 +36,7 @@ export default function MatchDetailPage() {
 
   return (
     <div className="matches-layout">
-      <Sidebar selected="Zápasy" setSelected={() => {}} />
+      <Sidebar  />
 
       <main className="matches-main">
         <header className="matches-header">

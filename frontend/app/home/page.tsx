@@ -28,7 +28,7 @@ export default function HomePage() {
 
   const team = {
     teamId: 1,
-    teamName: "MFK Ružomberok",
+    name: "MFK Ružomberok",
     description: "Profesionálny futbalový klub z Ružomberka.",
     country: "Slovensko",
   };

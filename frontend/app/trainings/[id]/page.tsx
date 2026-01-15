@@ -1,64 +1,113 @@
 "use client";
 
+import { useMemo } from "react";
+import { useParams } from "next/navigation";
+import { Container, Row, Col, Alert, Spinner, Card } from "react-bootstrap";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/TrainingsPage.css";
-
-type TrainingDetail = {
-  id: number;
-  date: string;
-  time: string;
-  location: string;
-  type: string;
-  intensity: "Low" | "Medium" | "High";
-  note?: string;
-  durationMinutes: number;
-  coachName: string;
-};
-
-const MOCK_TRAINING_DETAIL: TrainingDetail = {
-  id: 1,
-  date: "2024-12-10",
-  time: "18:00",
-  location: "Štadión Skolkari",
-  type: "Technický tréning",
-  intensity: "Medium",
-  note: "Zameranie na prihrávky a pressing",
-  durationMinutes: 90,
-  coachName: "Tréner Novák",
-};
+import { useTrainingDetail } from "@/hooks/trainings/useTrainingDetail";
+import { useEventAttendance } from "@/hooks/attendance/useEventAttendance";
+import { useAddAttendance } from "@/hooks/attendance/useAddAttendance";
+import EventAttendanceTable from "@/components/attendance/EventAttendanceTable";
+import { getUserIdFromToken } from "@/lib/jwt";
+import { AttendanceStatus } from "@/types/attendance";
 
 export default function TrainingDetailPage() {
-  const t = MOCK_TRAINING_DETAIL; // neskôr nahradíš fetchom podľa id z URL
+  const { id } = useParams<{ id: string }>();
+  const myUserId = useMemo(() => getUserIdFromToken(), []);
+
+  const { training, loading, error } = useTrainingDetail(id);
+
+  const attendance = useEventAttendance("Training", training?.id);
+  const upsert = useAddAttendance();
+
+  const isCoach = training?.myRole === "Coach";
+
+  const handleSave = async (userId: number, status: AttendanceStatus, reason?: string) => {
+    if (!training) return;
+
+    const ok = await upsert.upsert({
+      eventType: "Training",
+      eventId: training.id,
+      status,
+      absenceReason: status === "Absent" ? (reason ?? "") : "",
+      userId: isCoach ? userId : undefined, // player neposiela userId
+    });
+
+    if (ok) {
+      await attendance.refetch(); // <- toto je pointa: po uložení refresh
+    }
+  };
 
   return (
-    <div className="trainings-layout">
-      <Sidebar />
+    <Container fluid className="p-0">
+      <Row>
+        <Col xs="auto" className="p-0">
+          <Sidebar />
+        </Col>
 
-      <main className="trainings-main">
-        <header className="trainings-header">
-          <h1 className="trainings-title">Detail tréningu</h1>
-        </header>
+        <Col className="p-4">
+          <h1 className="h3 mb-4">Detail tréningu</h1>
 
-        <section className="training-detail-card">
-          <div className="training-detail-header">
-            <div>
-              <p className="training-date">
-                {t.date} · {t.time}
-              </p>
-              <h2 className="training-type">{t.type}</h2>
+          {loading && (
+            <div className="d-flex align-items-center gap-2">
+              <Spinner size="sm" />
+              <span>Načítavam…</span>
             </div>
-            <span className={`training-intensity ${t.intensity.toLowerCase()}`}>
-              {t.intensity}
-            </span>
-          </div>
+          )}
 
-          <p className="training-location">Miesto: {t.location}</p>
-          <p className="training-location">Tréner: {t.coachName}</p>
-          <p className="training-location">Trvanie: {t.durationMinutes} min</p>
+          {error && <Alert variant="danger">{error}</Alert>}
 
-          {t.note && <p className="training-note">Poznámka: {t.note}</p>}
-        </section>
-      </main>
-    </div>
+          {training && (
+            <>
+              <Card className="mb-4 shadow-sm">
+                <Card.Body>
+                  <div className="d-flex justify-content-between">
+                    <div>
+                      <div className="fw-semibold">
+                        {new Date(training.date).toLocaleDateString("sk-SK")}{" "}
+                        {new Date(training.date).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" })}
+                      </div>
+                      <div className="text-muted">{training.teamName}</div>
+                    </div>
+                  </div>
+
+                  <div className="mt-3">
+                    <div className="fw-semibold">Miesto</div>
+                    <div>{training.location}</div>
+                  </div>
+
+                  {training.description && (
+                    <div className="mt-3">
+                      <div className="fw-semibold">Popis</div>
+                      <div className="text-muted">{training.description}</div>
+                    </div>
+                  )}
+                </Card.Body>
+              </Card>
+
+              <h2 className="h5 mb-3">Dochádzka</h2>
+
+              {attendance.loading && (
+                <div className="d-flex align-items-center gap-2">
+                  <Spinner size="sm" />
+                  <span>Načítavam dochádzku…</span>
+                </div>
+              )}
+
+              {!attendance.loading && (
+                <EventAttendanceTable
+                  items={attendance.items}
+                  isCoach={!!isCoach}
+                  myUserId={myUserId}
+                  saving={upsert.loading}
+                  error={attendance.error || upsert.error}
+                  onSave={handleSave}
+                />
+              )}
+            </>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 }

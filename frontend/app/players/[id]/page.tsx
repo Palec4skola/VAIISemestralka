@@ -20,7 +20,7 @@ const MOCK_PLAYER: Player = {
 export default function PlayerDetailPage() {
   return (
     <div className="team-layout">
-      <Sidebar selected="Tím" setSelected={() => {}} />
+      <Sidebar  />
 
       <main className="team-main">
         <header className="team-header-bar">
