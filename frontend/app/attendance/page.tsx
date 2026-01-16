@@ -26,7 +26,7 @@ const MOCK_SESSIONS = [
 export default function AttendancePage() {
   return (
     <div className="attendance-layout">
-      <Sidebar selected="Dochádzka" setSelected={() => {}} />
+      <Sidebar />
 
       <main className="attendance-main">
         <header className="attendance-header">

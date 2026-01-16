@@ -1,17 +1,19 @@
-import { Card, Badge } from "react-bootstrap";
+import { Card, Badge, Stack } from "react-bootstrap";
 import Link from "next/link";
 import { TrainingListItem } from "@/types/training";
+import { useRouter } from "next/navigation";
 
 type Props = {
   training: TrainingListItem;
 };
 
 export default function TrainingCard({ training }: Props) {
+  const router = useRouter();
   const date = new Date(training.date);
 
   return (
     <Card className="mb-3 shadow-sm">
-      <Card.Body as={Link} href={`/trainings/${training.id}`} className="text-decoration-none text-dark">
+      <Card.Body onClick={() => router.push(`/trainings/${training.id}`)} className="text-decoration-none text-dark">
         <div className="d-flex justify-content-between align-items-start">
           <div>
             <Card.Title className="mb-1">
@@ -23,8 +25,9 @@ export default function TrainingCard({ training }: Props) {
               {training.teamName}
             </Card.Subtitle>
           </div>
-
+          <Stack>
           <Badge bg="secondary">Tréning</Badge>
+          </Stack>
         </div>
 
         <div className="fw-semibold">{training.location}</div>

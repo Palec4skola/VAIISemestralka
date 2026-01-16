@@ -26,7 +26,7 @@ export default function TeamInfoPanel({ team, onSettingsClick }: Props) {
             }}
           />
           <div>
-            <Card.Title className="mb-0">{team.teamName}</Card.Title>
+            <Card.Title className="mb-0">{team.name}</Card.Title>
           </div>
         </div>
 

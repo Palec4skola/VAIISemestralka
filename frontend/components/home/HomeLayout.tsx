@@ -12,7 +12,7 @@ export default function HomeLayout({ selected, onSelect, children }: Props) {
     <Container fluid className="p-0">
       <Row>
         <Col xs="auto" className="p-0">
-          <Sidebar selected={selected} setSelected={onSelect} />
+          <Sidebar />
         </Col>
 
         <Col className="p-4">{children}</Col>

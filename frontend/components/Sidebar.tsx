@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Nav, Button, Offcanvas } from "react-bootstrap";
+import { Nav, Button, Offcanvas, Dropdown } from "react-bootstrap";
 
 type MenuItem = { label: string; path: string };
 
@@ -25,25 +25,67 @@ export default function Sidebar() {
     setShow(false); // na mobile zavrie menu po kliknutí
   };
 
-  // Active len keď si na route alebo v jej podstránke
   const isActive = (path: string) =>
     pathname === path || pathname.startsWith(path + "/");
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    setShow(false);
+    router.replace("/login");
+  };
+
+  // Profil dropdown dole
+  const ProfileMenu = (
+    <Dropdown align="end">
+      <Dropdown.Toggle
+        variant="dark"
+        className="w-100 d-flex align-items-center justify-content-between px-3 py-2"
+      >
+        <span className="d-flex align-items-center gap-2">
+          <span style={{ fontSize: 18 }}>👤</span>
+          <span className="text-truncate">Účet</span>
+        </span>
+        <span style={{ opacity: 0.8 }}>▾</span>
+      </Dropdown.Toggle>
+
+      <Dropdown.Menu className="shadow">
+        <Dropdown.Item onClick={() => go("/profile")}>
+          Profil
+        </Dropdown.Item>
+        <Dropdown.Item onClick={() => go("/settings")}>
+          Nastavenia
+        </Dropdown.Item>
+        <Dropdown.Divider />
+        <Dropdown.Item onClick={logout} className="text-danger">
+          Odhlásiť sa
+        </Dropdown.Item>
+      </Dropdown.Menu>
+    </Dropdown>
+  );
+
   const NavContent = (
-    <Nav className="flex-column gap-2">
-      {menuItems.map((item) => (
-        <Nav.Link
-          key={item.path}
-          onClick={() => go(item.path)}
-          className={`text-start rounded px-3 py-2 ${
-            isActive(item.path) ? "bg-primary text-white" : "text-light"
-          }`}
-          style={{ cursor: "pointer" }}
-        >
-          {item.label}
-        </Nav.Link>
-      ))}
-    </Nav>
+    <div className="d-flex flex-column h-100">
+      {/* menu */}
+      <Nav className="flex-column gap-2 flex-grow-1">
+        {menuItems.map((item) => (
+          <Nav.Link
+            key={item.path}
+            onClick={() => go(item.path)}
+            className={`text-start rounded px-3 py-2 ${
+              isActive(item.path) ? "bg-primary text-white" : "text-light"
+            }`}
+            style={{ cursor: "pointer" }}
+          >
+            {item.label}
+          </Nav.Link>
+        ))}
+      </Nav>
+
+      {/* profil úplne dole */}
+      <div className="mt-auto pt-3">
+        {ProfileMenu}
+      </div>
+    </div>
   );
 
   return (
@@ -76,6 +118,8 @@ export default function Sidebar() {
         >
           HomeBase
         </Button>
+
+        {/* dôležité: tu sa vyrenderuje aj profil dole */}
         {NavContent}
       </div>
 
@@ -89,7 +133,11 @@ export default function Sidebar() {
         <Offcanvas.Header closeButton closeVariant="white">
           <Offcanvas.Title>HomeBase</Offcanvas.Title>
         </Offcanvas.Header>
-        <Offcanvas.Body>{NavContent}</Offcanvas.Body>
+
+        {/* aby profil bol dole aj v offcanvas */}
+        <Offcanvas.Body className="d-flex flex-column">
+          {NavContent}
+        </Offcanvas.Body>
       </Offcanvas>
     </>
   );
