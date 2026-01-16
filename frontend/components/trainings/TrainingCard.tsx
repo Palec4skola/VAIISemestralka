@@ -13,21 +13,25 @@ export default function TrainingCard({ training }: Props) {
 
   return (
     <Card className="mb-3 shadow-sm">
-      <Card.Body onClick={() => router.push(`/trainings/${training.id}`)} className="text-decoration-none text-dark">
+      <Card.Body
+        onClick={() => router.push(`/trainings/${training.id}`)}
+        className="text-decoration-none text-dark"
+      >
         <div className="d-flex justify-content-between align-items-start">
           <div>
             <Card.Title className="mb-1">
               {date.toLocaleDateString("sk-SK")}{" "}
-              {date.toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" })}
+              {date.toLocaleTimeString("sk-SK", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
             </Card.Title>
 
             <Card.Subtitle className="text-muted mb-2">
               {training.teamName}
             </Card.Subtitle>
           </div>
-          <Stack>
           <Badge bg="secondary">Tréning</Badge>
-          </Stack>
         </div>
 
         <div className="fw-semibold">{training.location}</div>

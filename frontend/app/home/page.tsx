@@ -6,6 +6,7 @@ import HomeLayout from "@/components/home/HomeLayout";
 import HomeHeader from "@/components/home/HomeHeader";
 import HomeActions from "@/components/home/HomeActions";
 import TeamInfoPanel from "@/components/TeamInfoPanel";
+import RequireAuth from "@/components/ReuqireAuth";
 
 export default function HomePage() {
   const [selected, setSelected] = useState("Tím");
@@ -34,9 +35,13 @@ export default function HomePage() {
   };
 
   return (
+    <RequireAuth>
+          <div>
     <HomeLayout selected={selected} onSelect={handleSelect}>
       <HomeHeader title="Tím" actions={<HomeActions />} />
       <TeamInfoPanel team={team} />
     </HomeLayout>
+    </div>
+    </RequireAuth>
   );
 }

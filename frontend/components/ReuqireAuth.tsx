@@ -1,26 +1,31 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export default function RequireAuth({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // prečíta token len na klientovi
-  const token = useMemo(() => {
-    if (typeof window === "undefined") return null;
-    return localStorage.getItem("token");
-  }, []);
+  const [canRender, setCanRender] = useState(false);
 
   useEffect(() => {
-    if (!token) {
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
-    }
-  }, [token, router, pathname]);
+    const token = localStorage.getItem("token");
 
-  // kým nemáme token, nič nerenderuj (nebude “bliknutie”)
-  if (!token) return null;
+    if (!token) {
+      const qs = searchParams?.toString();
+      const fullPath = qs ? `${pathname}?${qs}` : pathname;
+      router.replace(`/login?next=${encodeURIComponent(fullPath)}`);
+      return;
+    }
+
+    // AI spravíme to async, aby to nebolo "synchronously within an effect"
+    queueMicrotask(() => setCanRender(true));
+    // alternatíva: setTimeout(() => setCanRender(true), 0);
+  }, [router, pathname, searchParams]);
+
+  if (!canRender) return null;
 
   return <>{children}</>;
 }
