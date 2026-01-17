@@ -11,11 +11,13 @@ public record MatchListItemDto(
 
 // Dtos/Matches/MatchDetailDto.cs
 public record MatchDetailDto(
+    int Id,
     DateTime Date,
     string Location,
     string Name,
     string Opponent,
-    string Result
+    string Result,
+    bool IsCoachOfTeam   
 );
 
 // Dtos/Matches/MatchCreateDto.cs

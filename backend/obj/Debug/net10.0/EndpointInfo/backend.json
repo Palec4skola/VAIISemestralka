@@ -1036,6 +1036,10 @@
       "MatchDetailDto": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
           "date": {
             "type": "string",
             "format": "date-time"
@@ -1055,6 +1059,9 @@
           "result": {
             "type": "string",
             "nullable": true
+          },
+          "isCoachOfTeam": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

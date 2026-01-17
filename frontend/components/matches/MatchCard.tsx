@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Badge, Card } from "react-bootstrap";
 import type { MatchListItemDto } from "@/types/match";
 import { useRouter } from "next/navigation";
@@ -23,7 +22,7 @@ export default function MatchCard({ match }: { match: MatchListItemDto }) {
         <Card.Body className="d-flex justify-content-between align-items-start gap-3">
           <div>
             <div className="text-muted small">
-              {date} · {time} · {match.teamName}
+              {date} · {time} · {match.name}
             </div>
             <div className="fw-semibold fs-5 mt-1">vs {match.opponent}</div>
             <div className="text-muted mt-1">{match.location}</div>

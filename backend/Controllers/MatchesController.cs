@@ -75,9 +75,16 @@ namespace backend.Controllers
         {
             var userId = GetUserId();
 
+            
+
             var match = await _context.Matches.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
             if (match == null) return NotFound();
 
+            var isCoach = await _context.TeamUsers.AnyAsync(tu =>
+                tu.TeamId == match.TeamId &&
+                tu.UserId == userId &&
+                tu.Role == "Coach"
+            );
             var isMember = await IsMemberOfTeam(userId, match.TeamId);
             if (!isMember) return Forbid();
 
@@ -87,7 +94,13 @@ namespace backend.Controllers
                 .FirstAsync();
 
             return Ok(new MatchDetailDto(
-                match.Date, match.Location, teamName, match.Opponent, match.Result
+                match.Id,
+                match.Date,
+                match.Location,
+                teamName,
+                match.Opponent,
+                match.Result,
+                isCoach
             ));
         }
 
@@ -116,7 +129,7 @@ namespace backend.Controllers
 
         // ---------- WRITE (iba coach) ----------
 
-        // POST: matches
+        // POST: matches/{teamId}
         [HttpPost("{teamId:int}")]
         public async Task<ActionResult<MatchDetailDto>> Create(int teamId,[FromBody] MatchCreateDto dto)
         {
@@ -134,6 +147,11 @@ namespace backend.Controllers
                 Opponent = dto.Opponent?.Trim() ?? "",
                 Result = dto.Result?.Trim() ?? ""
             };
+            var isCoach = await _context.TeamUsers.AnyAsync(tu =>
+                tu.TeamId == match.TeamId &&
+                tu.UserId == userId &&
+                tu.Role == "Coach"
+            );
 
             _context.Matches.Add(match);
             await _context.SaveChangesAsync();
@@ -143,8 +161,14 @@ namespace backend.Controllers
                 .Select(t => t.Name)
                 .FirstAsync();
 
-            return CreatedAtAction(nameof(GetById), new { id = match.Id }, new MatchDetailDto(
-                 match.Date, match.Location, teamName, match.Opponent, match.Result
+            return Ok(new MatchDetailDto(
+                match.Id,
+                match.Date,
+                match.Location,
+                teamName,
+                match.Opponent,
+                match.Result,
+                isCoach
             ));
         }
 

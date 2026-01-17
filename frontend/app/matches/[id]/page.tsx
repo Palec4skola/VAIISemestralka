@@ -1,73 +1,161 @@
 "use client";
 
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/MatchesPage.css";
+import {
+  Alert,
+  Badge,
+  Card,
+  Col,
+  Container,
+  Row,
+  Spinner,
+  Stack,
+  Button,
+} from "react-bootstrap";
+import { useMatchDetail } from "@/hooks/matches/useMatchDetail";
+import { PencilSquare, Trash } from "react-bootstrap-icons";
 
-type MatchDetail = {
-  id: number;
-  date: string;
-  time: string;
-  opponent: string;
-  location: string;
-  home: boolean;
-  result?: string;
-  competition: string;
-  goalsFor: number;
-  goalsAgainst: number;
-  note?: string;
-};
-
-const MOCK_MATCH_DETAIL: MatchDetail = {
-  id: 1,
-  date: "2024-12-20",
-  time: "18:30",
-  opponent: "FK Mesto",
-  location: "Domáci štadión",
-  home: true,
-  result: "2 : 1",
-  competition: "Liga - kolo 12",
-  goalsFor: 2,
-  goalsAgainst: 1,
-  note: "Dobrý výkon v druhom polčase, gól z penalty.",
-};
+function formatDateTime(iso: string) {
+  const d = new Date(iso);
+  const date = d.toLocaleDateString("sk-SK", {
+    year: "numeric",
+    month: "long",
+    day: "2-digit",
+  });
+  const time = d.toLocaleTimeString("sk-SK", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return { date, time };
+}
 
 export default function MatchDetailPage() {
-  const m = MOCK_MATCH_DETAIL; // neskôr fetch podľa id
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const [showDelete, setShowDelete] = useState(false);
+  const matchId = Number(params.id);
 
+  const { match, loading, error, refresh } = useMatchDetail(matchId);
+  const isCoach = match?.isCoachOfTeam === true;
   return (
-    <div className="matches-layout">
-      <Sidebar  />
+    <Container fluid className="p-0">
+      <Row>
+        <Col xs="auto" className="p-0">
+          <Sidebar />
+        </Col>
 
-      <main className="matches-main">
-        <header className="matches-header">
-          <h1 className="matches-title">Detail zápasu</h1>
-        </header>
-
-        <section className="match-detail-card">
-          <div className="match-detail-header">
+        <Col className="py-3">
+          <Stack
+            direction="horizontal"
+            className="justify-content-between align-items-start mb-3"
+          >
             <div>
-              <p className="match-date">
-                {m.date} · {m.time}
-              </p>
-              <h2 className="match-opponent">
-                {m.home ? "Domáci" : "Hostia"} vs {m.opponent}
-              </h2>
-              <p className="match-competition">{m.competition}</p>
+              <h1 className="h3 mb-1">Detail zápasu</h1>
+              <div className="text-muted">Informácie o zápase</div>
             </div>
 
-            <span className="match-result played">
-              {m.result ?? "Nadchádzajúci"}
-            </span>
-          </div>
+            <Stack direction="horizontal" gap={2}>
+              <Button
+                variant="outline-secondary"
+                size="sm"
+                onClick={() => router.back()}
+              >
+                Späť
+              </Button>
 
-          <p className="match-location">Miesto: {m.location}</p>
-          <p className="match-location">
-            Skóre: {m.goalsFor} : {m.goalsAgainst}
-          </p>
+              {isCoach && (
+                <>
+                  <Button
+                    variant="outline-warning"
+                    size="sm"
+                    title="Upraviť zápas"
+                    onClick={() => router.push(`/matches/${matchId}/edit`)}
+                    className="d-flex align-items-center"
+                  >
+                    <PencilSquare size={16} />
+                  </Button>
 
-          {m.note && <p className="match-note">Poznámka: {m.note}</p>}
-        </section>
-      </main>
-    </div>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    title="Zmazať zápas"
+                    onClick={() => setShowDelete(true)}
+                    className="d-flex align-items-center"
+                  >
+                    <Trash size={16} />
+                  </Button>
+                </>
+              )}
+            </Stack>
+          </Stack>
+
+          {loading && (
+            <div className="d-flex align-items-center gap-2 text-muted">
+              <Spinner animation="border" size="sm" />
+              Načítavam detail…
+            </div>
+          )}
+
+          {error && <Alert variant="danger">{error}</Alert>}
+
+          {!loading && !error && match && (
+            <Row className="justify-content-center">
+              <Col xs={12} md={10} lg={8}>
+                <Card className="shadow-sm">
+                  <Card.Body>
+                    <Stack
+                      direction="horizontal"
+                      className="justify-content-between align-items-start"
+                    >
+                      <div>
+                        {(() => {
+                          const { date, time } = formatDateTime(match.date);
+                          return (
+                            <>
+                              <div className="text-muted small">
+                                {date} · {time}
+                              </div>
+                              <div className="mt-1 fw-semibold fs-4">
+                                vs {match.opponent}
+                              </div>
+                              <div className="text-muted mt-1">
+                                {match.name}
+                              </div>
+                            </>
+                          );
+                        })()}
+                      </div>
+
+                      <div className="text-end">
+                        {(match.result ?? "").trim() ? (
+                          <Badge bg="success" className="fs-6">
+                            {match.result}
+                          </Badge>
+                        ) : (
+                          <Badge bg="warning" text="dark" className="fs-6">
+                            Nadchádzajúci
+                          </Badge>
+                        )}
+                      </div>
+                    </Stack>
+
+                    <hr className="my-3" />
+
+                    <div className="d-flex flex-column gap-2">
+                      <div>
+                        <span className="text-muted">Miesto: </span>
+                        <span className="fw-medium">{match.location}</span>
+                      </div>
+                    </div>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </Row>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 }
