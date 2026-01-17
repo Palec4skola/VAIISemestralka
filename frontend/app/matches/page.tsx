@@ -11,8 +11,6 @@ export default function MatchesPage() {
   const router = useRouter();
   const { matches, mode, setMode, loading, error } = useMatches();
 
-  // TODO: neskôr napoj na rolu
-  const canCreate = true;
 
   return (
     
@@ -27,7 +25,6 @@ export default function MatchesPage() {
             mode={mode}
             onModeChange={setMode}
             onCreate={() => router.push("/matches/create")}
-            canCreate={canCreate}
           />
 
           {error && <Alert variant="danger">{error}</Alert>}

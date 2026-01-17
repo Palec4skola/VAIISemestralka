@@ -34,7 +34,7 @@ export default function TrainingDetailPage() {
     });
 
     if (ok) {
-      await attendance.refetch(); // <- toto je pointa: po uložení refresh
+      await attendance.refetch(); // obnovíme dochádzku
     }
   };
 
@@ -67,7 +67,7 @@ export default function TrainingDetailPage() {
                         {new Date(training.date).toLocaleDateString("sk-SK")}{" "}
                         {new Date(training.date).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" })}
                       </div>
-                      <div className="text-muted">{training.teamName}</div>
+                      <div className="text-muted">{training.name}</div>
                     </div>
                   </div>
 

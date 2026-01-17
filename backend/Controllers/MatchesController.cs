@@ -110,8 +110,7 @@ namespace backend.Controllers
         {
             var userId = GetUserId();
 
-            // rovnaký pattern ako u teba na trainings
-            var fromUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Local).ToUniversalTime();
+            var fromUtc = DateTime.UtcNow;
 
             var items = await (
                 from tu in _context.TeamUsers

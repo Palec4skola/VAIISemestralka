@@ -5,7 +5,7 @@ export type TrainingListItem = {
   location: string;
   description: string;
   teamId: number;
-  teamName: string;
+  name: string;
 };
 export type TrainingDetail = {
   id: number;
@@ -13,12 +13,13 @@ export type TrainingDetail = {
   location: string;
   description: string;
   teamId: number;
-  teamName: string;
+  name: string;
   myRole: "Coach" | "Player" | string;
   myAttendanceStatus?: string | null;   // napr. "Present" | "Absent" | null
   myAbsenceReason?: string | null;
 };
 
+export type TrainingsMode = "all" | "upcoming";
 
 export type AttendanceRow = {
   userId: number;

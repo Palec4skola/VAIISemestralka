@@ -24,7 +24,7 @@ export default function MatchCard({ match }: { match: MatchListItemDto }) {
             <div className="text-muted small">
               {date} · {time} · {match.name}
             </div>
-            <div className="fw-semibold fs-5 mt-1">vs {match.opponent}</div>
+            <div className="fw-semibold fs-5 mt-1">{match.name} vs {match.opponent}</div>
             <div className="text-muted mt-1">{match.location}</div>
           </div>
 

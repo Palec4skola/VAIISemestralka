@@ -23,7 +23,7 @@ namespace FootballTeam.Controllers
         [HttpGet("upcoming")]
         public async Task<ActionResult<List<TrainingListItemDto>>> GetUpcoming() {
             var userId = GetUserId();
-            var fromUtc = DateTime.SpecifyKind(DateTime.Today, DateTimeKind.Local).ToUniversalTime();
+            var fromUtc = DateTime.UtcNow;
 
             var items = await (
                 from tu in _context.TeamUsers
@@ -40,28 +40,21 @@ namespace FootballTeam.Controllers
         }
 
         [Authorize]
-        [HttpGet("{teamId:int}")]
-        public async Task<ActionResult<List<TrainingListItemDto>>> GetTeamTrainings(int teamId)
+        [HttpGet]
+        public async Task<ActionResult<List<TrainingListItemDto>>> GetTrainings()
         {
             var userId = GetUserId();
-            var time = DateTime.UtcNow.Date;
 
-            // over, že user je člen tímu (M:N)
-            var isMember = await _context.TeamUsers.AnyAsync(x => x.TeamId == teamId && x.UserId == userId);
-            if (!isMember) return Forbid();
-
-            var teamName = await _context.Teams
-                .Where(x => x.Id == teamId)
-                .Select(x => x.Name)
-                .FirstAsync();
-
-            var items = await _context.Trainings
-                .Where(t => t.TeamId == teamId && t.Date >= time)
-                .OrderBy(t => t.Date)
-                .Select(t => new TrainingListItemDto(
-                    t.Id, t.Date, t.Location, t.Description, t.TeamId, teamName
-                ))
-                .ToListAsync();
+            var items = await (
+                from tu in _context.TeamUsers
+                join m in _context.Trainings on tu.TeamId equals m.TeamId
+                join team in _context.Teams on m.TeamId equals team.Id
+                where tu.UserId == userId
+                orderby m.Date
+                select new TrainingListItemDto(
+                    m.Id, m.Date, m.Location,m.Description, m.TeamId, team.Name
+                )
+            ).ToListAsync();
 
             return Ok(items);
         }

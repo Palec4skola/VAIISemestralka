@@ -28,7 +28,7 @@ export default function TrainingCard({ training }: Props) {
             </Card.Title>
 
             <Card.Subtitle className="text-muted mb-2">
-              {training.teamName}
+              {training.name}
             </Card.Subtitle>
           </div>
           <Badge bg="secondary">Tréning</Badge>

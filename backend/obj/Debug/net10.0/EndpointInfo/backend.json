@@ -731,21 +731,10 @@
         }
       }
     },
-    "/Trainings/{teamId}": {
+    "/Trainings": {
       "get": {
         "tags": [
           "Trainings"
-        ],
-        "parameters": [
-          {
-            "name": "teamId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -778,7 +767,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/Trainings/{teamId}": {
       "post": {
         "tags": [
           "Trainings"

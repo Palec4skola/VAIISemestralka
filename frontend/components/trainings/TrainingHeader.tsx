@@ -1,26 +1,21 @@
 "use client";
 
 import { Button, ButtonGroup, Stack } from "react-bootstrap";
-import type { MatchesMode } from "@/types/match";
 
-export default function MatchesHeader({
+export default function TrainingHeader({
   mode,
   onModeChange,
   onCreate,
 }: {
-  mode: MatchesMode;
-  onModeChange: (m: MatchesMode) => void;
+  mode: "all" | "upcoming";
+  onModeChange: (m: "all" | "upcoming") => void;
   onCreate: () => void;
-  canCreate?: boolean;
 }) {
   return (
-    <Stack
-      direction="horizontal"
-      className="justify-content-between align-items-start mb-3"
-    >
+    <Stack direction="horizontal" className="justify-content-between align-items-start mb-3 mt-3">
       <div>
-        <h1 className="h3 mb-1">Zápasy</h1>
-        <div className="text-muted">Prehľad zápasov v tvojich tímoch</div>
+        <h1 className="h3 mb-1">Tréningy</h1>
+        <div className="text-muted">Prehľad tréningov v tvojich tímoch</div>
       </div>
 
       <Stack direction="horizontal" gap={2}>
@@ -40,7 +35,7 @@ export default function MatchesHeader({
         </ButtonGroup>
 
         <Button variant="success" onClick={onCreate}>
-          + Pridať zápas
+          + Pridať tréning
         </Button>
       </Stack>
     </Stack>

@@ -413,6 +413,26 @@
   },
   {
     "ContainingType": "FootballTeam.Controllers.TrainingsController",
+    "Method": "GetTrainings",
+    "RelativePath": "Trainings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[backend.DTO.TrainingListItemDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "FootballTeam.Controllers.TrainingsController",
     "Method": "UpdateTraining",
     "RelativePath": "Trainings/{id}",
     "HttpMethod": "PUT",
@@ -465,32 +485,6 @@
     "ReturnTypes": [
       {
         "Type": "backend.DTO.TrainingDetailDto",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "FootballTeam.Controllers.TrainingsController",
-    "Method": "GetTeamTrainings",
-    "RelativePath": "Trainings/{teamId}",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "teamId",
-        "Type": "System.Int32",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[backend.DTO.TrainingListItemDto, backend, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",

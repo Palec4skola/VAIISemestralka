@@ -37,7 +37,7 @@ export default function MatchDetailPage() {
   const [showDelete, setShowDelete] = useState(false);
   const matchId = Number(params.id);
 
-  const { match, loading, error, refresh } = useMatchDetail(matchId);
+  const { match, loading, error } = useMatchDetail(matchId);
   const isCoach = match?.isCoachOfTeam === true;
   return (
     <Container fluid className="p-0">
@@ -118,10 +118,7 @@ export default function MatchDetailPage() {
                                 {date} · {time}
                               </div>
                               <div className="mt-1 fw-semibold fs-4">
-                                vs {match.opponent}
-                              </div>
-                              <div className="text-muted mt-1">
-                                {match.name}
+                                {match.name} vs {match.opponent}
                               </div>
                             </>
                           );
