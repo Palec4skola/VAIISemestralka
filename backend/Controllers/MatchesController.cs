@@ -60,7 +60,7 @@ namespace backend.Controllers
                 join m in _context.Matches on tu.TeamId equals m.TeamId
                 join team in _context.Teams on m.TeamId equals team.Id
                 where tu.UserId == userId
-                orderby m.Date descending
+                orderby m.Date
                 select new MatchListItemDto(
                     m.Id, m.Date, m.Location, m.TeamId, team.Name, m.Opponent, m.Result
                 )

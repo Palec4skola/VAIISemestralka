@@ -1,124 +1,52 @@
 "use client";
 
-import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/MatchesPage.css";
-
-type MatchForm = {
-  date: string;      // "2024-12-20"
-  time: string;      // "18:30"
-  location: string;
-  opponent: string;
-  result: string;    // napr. "2 : 1" alebo prázdne pre budúci zápas
-};
+import { useRouter } from "next/navigation";
+import { Card, Container, Row, Col } from "react-bootstrap";
+import MatchCreateForm from "@/components/matches/MatchCreateFrom";
+import { useCreateMatch } from "@/hooks/matches/useCreateMatch";
 
 export default function CreateMatchPage() {
-  const [form, setForm] = useState<MatchForm>({
-    date: "",
-    time: "",
-    location: "",
-    opponent: "",
-    result: "",
-  });
+  const router = useRouter();
+  const { create, loading, error } = useCreateMatch();
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const handleChange =
-    (field: keyof MatchForm) =>
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setForm((prev) => ({ ...prev, [field]: e.target.value }));
-    };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-
-    if (!form.date || !form.time || !form.location || !form.opponent) {
-      setError("Vyplň dátum, čas, miesto a súpera");
-      return;
-    }
-
-    // zatiaľ len mock – neskôr tu bude fetch na API
-    console.log("CREATE MATCH MOCK:", form);
-    setSuccess("Zápas bol (mock) vytvorený.");
+  const handleSubmit = async (data: {
+    teamId: number;
+    dateIsoUtc: string;
+    location: string;
+    opponent: string;
+    result: string;
+  }) => {
+    const ok = await create(data);
+    if (ok) router.push("/matches");
   };
 
   return (
-    <div className="matches-layout">
-      <Sidebar  />
+    <div className="d-flex">
+      <Sidebar />
 
-      <main className="matches-main">
-        <header className="matches-header">
-          <h1 className="matches-title">Vytvoriť zápas</h1>
-        </header>
+      <main className="flex-grow-1 p-3">
+        <Container fluid>
+          <Row className="mb-4">
+            <Col>
+              <h1 className="h3">Vytvoriť zápas</h1>
+            </Col>
+          </Row>
 
-        <section className="match-detail-card">
-          <form onSubmit={handleSubmit} className="match-form">
-            {error && <p className="team-error">{error}</p>}
-            {success && <p className="team-success">{success}</p>}
-
-            <div className="form-row">
-              <label htmlFor="date">Dátum</label>
-              <input
-                id="date"
-                type="date"
-                value={form.date}
-                onChange={handleChange("date")}
-              />
-            </div>
-
-            <div className="form-row">
-              <label htmlFor="time">Čas</label>
-              <input
-                id="time"
-                type="time"
-                value={form.time}
-                onChange={handleChange("time")}
-              />
-            </div>
-
-            <div className="form-row">
-              <label htmlFor="location">Miesto</label>
-              <input
-                id="location"
-                type="text"
-                placeholder="Domáci štadión / ihrisko súpera..."
-                value={form.location}
-                onChange={handleChange("location")}
-              />
-            </div>
-
-            <div className="form-row">
-              <label htmlFor="opponent">Súper</label>
-              <input
-                id="opponent"
-                type="text"
-                placeholder="Názov súpera"
-                value={form.opponent}
-                onChange={handleChange("opponent")}
-              />
-            </div>
-
-            <div className="form-row">
-              <label htmlFor="result">
-                Výsledok (voliteľné, napr. 2 : 1)
-              </label>
-              <input
-                id="result"
-                type="text"
-                placeholder="2 : 1"
-                value={form.result}
-                onChange={handleChange("result")}
-              />
-            </div>
-
-            <button type="submit" className="primary-button">
-              Uložiť zápas
-            </button>
-          </form>
-        </section>
+          <Row className="justify-content-center">
+            <Col xs={12} md={8} lg={6}>
+              <Card className="shadow-sm">
+                <Card.Body>
+                  <MatchCreateForm
+                    onSubmit={handleSubmit}
+                    loading={loading}
+                    apiError={error}
+                  />
+                </Card.Body>
+              </Card>
+            </Col>
+          </Row>
+        </Container>
       </main>
     </div>
   );

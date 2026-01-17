@@ -14,7 +14,7 @@ function fmt(iso: string) {
 
 export default function MatchCard({ match }: { match: MatchListItemDto }) {
   const { date, time } = fmt(match.date);
-  const played = (match.result ?? "").trim().length > 0;
+  const played = match.date <= new Date().toISOString();
     const router = useRouter();
 
   return (

@@ -1,87 +1,109 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { apiClient } from "@/lib/apiClient";
 import type { MatchDetailDto, MatchUpdateDto } from "@/types/match";
+import {useRouter} from "next/navigation";
 
 function toDatetimeLocal(iso: string) {
-  // "2026-03-01T15:00:00Z" -> "2026-03-01T16:00" (podla local tz)
   const d = new Date(iso);
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}`;
 }
 
-export function useEditMatchForm(matchId: number) {
-  const [form, setForm] = useState<MatchUpdateDto>({
-    date: "",
-    location: "",
-    opponent: "",
-    result: "",
-  });
+export function useEditMatch(id: string) {
+  const matchId = Number(id);
+  const router = useRouter();
+
+  const [match, setMatch] = useState<MatchDetailDto | null>(null);
+  const [form, setForm] = useState<MatchUpdateDto | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  // Load detail (na predvyplnenie)
-  useEffect(() => {
-    if (!Number.isFinite(matchId) || matchId <= 0) return;
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
-    (async () => {
-      setLoading(true);
-      setError(null);
+  const load = useCallback(async () => {
+    if (!Number.isFinite(matchId) || matchId <= 0) {
+      setError("Neplatné ID zápasu.");
+      setLoading(false);
+      return;
+    }
 
-      try {
-        const res = await apiClient(`/api/matches/${matchId}`);
-        if (!res.ok) throw new Error((await res.text().catch(() => "")) || `Load failed (${res.status})`);
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
-        const data = (await res.json()) as MatchDetailDto;
+    try {
+      const res = await apiClient(`/matches/${matchId}`);
 
-        setForm({
-          date: toDatetimeLocal(data.date),
-          location: data.location ?? "",
-          opponent: data.opponent ?? "",
-          result: data.result ?? "",
-        });
-      } catch {
-        setError( "Nepodarilo sa načítať zápas.");
-      } finally {
-        setLoading(false);
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Load failed (${res.status})`);
       }
-    })();
+
+      const data = (await res.json()) as MatchDetailDto;
+      setMatch(data);
+
+      setForm({
+        date: toDatetimeLocal(data.date),
+        location: data.location ?? "",
+        opponent: data.opponent ?? "",
+        result: data.result ?? "",
+      });
+    } catch  {
+      setError("Nepodarilo sa načítať zápas.");
+      setMatch(null);
+      setForm(null);
+    } finally {
+      setLoading(false);
+    }
   }, [matchId]);
 
-  const updateField = (name: keyof MatchUpdateDto, value: string) => {
-    setForm((f) => ({ ...f, [name]: value }));
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const updateField = (field: keyof MatchUpdateDto, value: string) => {
+    setForm((prev) => (prev ? { ...prev, [field]: value } : prev));
   };
 
   const submit = async () => {
+    if (!form) return;
+
     setSaving(true);
-    setError(null);
+    setError("");
+    setSuccess("");
 
     try {
       const payload = {
-        ...form,
         date: new Date(form.date).toISOString(),
+        location: form.location.trim(),
+        opponent: form.opponent.trim(),
+        result: form.result.trim(), // "" je ok
       };
 
-      const res = await apiClient(`/api/matches/${matchId}`, {
+      const res = await apiClient(`/matches/${matchId}`, {
         method: "PUT",
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error((await res.text().catch(() => "")) || `Save failed (${res.status})`);
-      return true;
+      if (!res.ok) {
+        const text = await res.text().catch(() => "");
+        throw new Error(text || `Save failed (${res.status})`);
+      }
+
+      setSuccess("Zmeny boli uložené.");
+      router.push(`/matches`);
     } catch {
       setError("Nepodarilo sa uložiť zmeny.");
-      return false;
     } finally {
       setSaving(false);
     }
   };
 
-  return useMemo(
-    () => ({ form, updateField, loading, saving, error, submit }),
-    [form, loading, saving, error]
-  );
+  return { match, form, loading, saving, error, success, updateField, submit };
 }
