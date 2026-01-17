@@ -9,17 +9,17 @@ export default function TeamPage() {
 
   return (
     <Container fluid className="p-0">
-      <Row>
+      <Row className="g-0">
         <Col xs="auto" className="p-0">
           <Sidebar />
         </Col>
-
-        <Col>
-          <h1 className="h3 mb-4">Tímy</h1>
+    
+        <Col className="ps-3 ps-md-4">
+          <h1 className="h3 mb-3 mt-3" >Tímy</h1>
 
           {error && <Alert variant="danger">{error}</Alert>}
 
-          <Row className="justify-content-center">
+          <Row className="justify-content-center g-0">
             <Col xs={12} md={10} lg={8}>
               <TeamList teams={teams} onDelete={deleteTeam} />
             </Col>

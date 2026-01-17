@@ -14,7 +14,7 @@ export type TrainingDetail = {
   description: string;
   teamId: number;
   name: string;
-  myRole: "Coach" | "Player" | string;
+  role: "Coach" | "Player" | string;
   myAttendanceStatus?: string | null;   // napr. "Present" | "Absent" | null
   myAbsenceReason?: string | null;
 };
@@ -27,5 +27,10 @@ export type AttendanceRow = {
   email?: string;
   status?: AttendanceStatus | null;
   absenceReason?: string | null;
+};
+export type TrainingUpdateDto = {
+  date: string;        
+  location: string;
+  description?: string | null;
 };
 

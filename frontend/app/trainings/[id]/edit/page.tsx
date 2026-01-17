@@ -2,14 +2,23 @@
 
 import { useParams } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
-import EditMatchForm from "@/components/matches/MatchEditForm";
-import { useEditMatch } from "@/hooks/matches/useEditMatch";
+import EditTrainingForm from "@/components/trainings/TrainingEditForm";
+import { useEditTraining } from "@/hooks/trainings/useEditTraining";
 import { Container, Row, Col, Alert, Spinner } from "react-bootstrap";
 
-export default function EditMatchPage() {
+export default function EditTrainingPage() {
   const params = useParams<{ id: string }>();
-  const { match, form, loading, saving, error, success, updateField, submit } =
-    useEditMatch(params.id);
+
+  const {
+    training,
+    form,
+    loading,
+    saving,
+    error,
+    success,
+    updateField,
+    submit,
+  } = useEditTraining(params.id);
 
   return (
     <div className="d-flex min-vh-100">
@@ -17,10 +26,11 @@ export default function EditMatchPage() {
 
       <main className="flex-grow-1">
         <header className="bg-light border-bottom p-3">
-          <h1 className="h3 mb-0">Upraviť zápas</h1>
-          {match && (
+          <h1 className="h3 mb-0">Upraviť tréning</h1>
+
+          {training && (
             <div className="text-muted small mt-1">
-              {match.name} vs {match.opponent}
+              {training.location}
             </div>
           )}
         </header>
@@ -32,9 +42,9 @@ export default function EditMatchPage() {
           {loading && <Spinner />}
 
           {form && (
-            <Row className="justify-content-center">
+            <Row className="justify-content-center g-0">
               <Col md={8} lg={6}>
-                <EditMatchForm
+                <EditTrainingForm
                   form={form}
                   onChange={updateField}
                   onSubmit={submit}

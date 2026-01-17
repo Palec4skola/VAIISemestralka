@@ -1,77 +1,81 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
+import { useCalendar } from "@/hooks/calendar/useCalendar";
 import "@/styles/CalendarPage.css";
 
 type ActivityType = "training" | "match";
 
 type Activity = {
   id: number;
-  date: string;      // "2024-12-10"
-  time: string;      // "18:00"
-  title: string;     // názov/typ
+  time: string;
+  title: string;
   type: ActivityType;
+  url: string;
 };
 
-const MOCK_ACTIVITIES: Activity[] = [
-  {
-    id: 1,
-    date: "2024-12-10",
-    time: "18:00",
-    title: "Tréning – technika",
-    type: "training",
-  },
-  {
-    id: 2,
-    date: "2024-12-12",
-    time: "19:00",
-    title: "Zápas vs FK Mesto",
-    type: "match",
-  },
-  {
-    id: 3,
-    date: "2024-12-15",
-    time: "17:30",
-    title: "Tréning – kondičný",
-    type: "training",
-  },
-];
+function toDayAndTimeLocal(iso: string) {
+  const d = new Date(iso);
+  const day = d.getDate();
+  const time = d.toLocaleTimeString("sk-SK", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return { day, time };
+}
 
 export default function CalendarPage() {
-  const [current] = useState(() => new Date(2024, 11, 1)); // december 2024 (mesiace 0-based)
+  const router = useRouter();
 
-  const year = current.getFullYear();
-  const month = current.getMonth(); // 0-11
+  const [current, setCurrent] = useState(() => new Date());
 
-  const firstDayOfMonth = new Date(year, month, 1);
-  const startWeekday = (firstDayOfMonth.getDay() + 6) % 7; // 0 = pondelok
-
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  // ⬇️ TU sa používa useCalendar
+  const { items, loading, error } = useCalendar(current);
 
   const activitiesByDay = useMemo(() => {
     const map: Record<number, Activity[]> = {};
-    for (const a of MOCK_ACTIVITIES) {
-      const d = new Date(a.date);
-      const day = d.getDate();
+
+    for (const it of items) {
+      const { day, time } = toDayAndTimeLocal(it.date);
+
+      const url =
+        it.type === "training"
+          ? `/trainings/${it.id}`
+          : `/matches/${it.id}`;
+
+      const a: Activity = {
+        id: it.id,
+        time,
+        title: it.title,
+        type: it.type,
+        url,
+      };
+
       if (!map[day]) map[day] = [];
       map[day].push(a);
     }
+
     return map;
-  }, []);
+  }, [items]);
+
+  const year = current.getFullYear();
+  const month = current.getMonth();
+
+  const firstDayOfMonth = new Date(year, month, 1);
+  const startWeekday = (firstDayOfMonth.getDay() + 6) % 7;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
 
   const weeks: (number | null)[][] = [];
-  let currentDay = 1 - startWeekday;
+  let dayCounter = 1 - startWeekday;
 
-  while (currentDay <= daysInMonth) {
+  while (dayCounter <= daysInMonth) {
     const week: (number | null)[] = [];
     for (let i = 0; i < 7; i++) {
-      if (currentDay < 1 || currentDay > daysInMonth) {
-        week.push(null);
-      } else {
-        week.push(currentDay);
-      }
-      currentDay++;
+      if (dayCounter < 1 || dayCounter > daysInMonth) week.push(null);
+      else week.push(dayCounter);
+      dayCounter++;
     }
     weeks.push(week);
   }
@@ -80,13 +84,26 @@ export default function CalendarPage() {
 
   return (
     <div className="calendar-layout">
-      <Sidebar selected="Kalendár" setSelected={() => {}} />
+      <Sidebar />
 
       <main className="calendar-main">
         <header className="calendar-header">
           <h1 className="calendar-title">
             Kalendár – {monthName} {year}
           </h1>
+
+          <div className="calendar-controls">
+            <button onClick={() => setCurrent(new Date(year, month - 1, 1))}>
+              ◀
+            </button>
+            <button onClick={() => setCurrent(new Date())}>Dnes</button>
+            <button onClick={() => setCurrent(new Date(year, month + 1, 1))}>
+              ▶
+            </button>
+          </div>
+
+          {loading && <div className="text-muted">Načítavam…</div>}
+          {error && <div className="alert alert-danger">{error}</div>}
         </header>
 
         <section className="calendar-grid">
@@ -108,11 +125,13 @@ export default function CalendarPage() {
                 return (
                   <div key={di} className="calendar-day">
                     <div className="calendar-day-number">{day}</div>
+
                     <div className="calendar-day-activities">
                       {activities.map((a) => (
                         <div
                           key={a.id}
                           className={`calendar-activity ${a.type}`}
+                          onClick={() => router.push(a.url)}
                         >
                           <span className="calendar-activity-time">
                             {a.time}

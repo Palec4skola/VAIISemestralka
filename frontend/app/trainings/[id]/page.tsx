@@ -2,7 +2,16 @@
 
 import { useMemo } from "react";
 import { useParams } from "next/navigation";
-import { Container, Row, Col, Alert, Spinner, Card } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  Alert,
+  Spinner,
+  Card,
+  Button,
+  Stack,
+} from "react-bootstrap";
 import Sidebar from "@/components/Sidebar";
 import { useTrainingDetail } from "@/hooks/trainings/useTrainingDetail";
 import { useEventAttendance } from "@/hooks/attendance/useEventAttendance";
@@ -10,19 +19,25 @@ import { useAddAttendance } from "@/hooks/attendance/useAddAttendance";
 import EventAttendanceTable from "@/components/attendance/EventAttendanceTable";
 import { getUserIdFromToken } from "@/lib/jwt";
 import { AttendanceStatus } from "@/types/attendance";
+import { PencilSquare, Trash } from "react-bootstrap-icons";
+import { useRouter } from "next/navigation";
 
 export default function TrainingDetailPage() {
   const { id } = useParams<{ id: string }>();
   const myUserId = useMemo(() => getUserIdFromToken(), []);
-
+  const router = useRouter();
   const { training, loading, error } = useTrainingDetail(id);
 
   const attendance = useEventAttendance("Training", training?.id);
   const upsert = useAddAttendance();
 
-  const isCoach = training?.myRole === "Coach";
+  const isCoach = training?.role === "Coach";
 
-  const handleSave = async (userId: number, status: AttendanceStatus, reason?: string) => {
+  const handleSave = async (
+    userId: number,
+    status: AttendanceStatus,
+    reason?: string,
+  ) => {
     if (!training) return;
 
     const ok = await upsert.upsert({
@@ -40,13 +55,55 @@ export default function TrainingDetailPage() {
 
   return (
     <Container fluid className="p-0">
-      <Row>
+      <Row className="g-0">
         <Col xs="auto" className="p-0">
           <Sidebar />
         </Col>
 
-        <Col className="p-4">
-          <h1 className="h3 mb-4">Detail tréningu</h1>
+        <Col className="ps-3 py-3 ps-md-4">
+        <Stack
+            direction="horizontal"
+            className="justify-content-between align-items-start mb-3"
+          >
+            <div>
+              <h1 className="h3 mb-1">Detail tréningu</h1>
+              <div className="text-muted">Informácie o tréningu</div>
+            </div>
+
+          <Stack direction="horizontal" gap={2}>
+
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={() => router.back()}
+            >
+              Späť
+            </Button>
+
+            {isCoach && (
+              <>
+                <Button
+                  variant="outline-warning"
+                  size="sm"
+                  title="Upraviť tréning"
+                  onClick={() => router.push(`/trainings/${id}/edit`)}
+                  className="d-flex align-items-center"
+                >
+                  <PencilSquare size={16} />
+                </Button>
+
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  title="Zmazať tréning"
+                  className="d-flex align-items-center"
+                >
+                  <Trash size={16} />
+                </Button>
+              </>
+            )}
+          </Stack>
+          </Stack>
 
           {loading && (
             <div className="d-flex align-items-center gap-2">
@@ -65,7 +122,10 @@ export default function TrainingDetailPage() {
                     <div>
                       <div className="fw-semibold">
                         {new Date(training.date).toLocaleDateString("sk-SK")}{" "}
-                        {new Date(training.date).toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" })}
+                        {new Date(training.date).toLocaleTimeString("sk-SK", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
                       </div>
                       <div className="text-muted">{training.name}</div>
                     </div>

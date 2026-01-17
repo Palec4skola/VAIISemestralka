@@ -41,12 +41,12 @@ export default function MatchDetailPage() {
   const isCoach = match?.isCoachOfTeam === true;
   return (
     <Container fluid className="p-0">
-      <Row>
+      <Row className="g-0">
         <Col xs="auto" className="p-0">
           <Sidebar />
         </Col>
 
-        <Col className="py-3">
+        <Col className="ps-3 py-3 ps-md-4">
           <Stack
             direction="horizontal"
             className="justify-content-between align-items-start mb-3"
@@ -101,7 +101,7 @@ export default function MatchDetailPage() {
           {error && <Alert variant="danger">{error}</Alert>}
 
           {!loading && !error && match && (
-            <Row className="justify-content-center">
+            <Row className="justify-content-center g-0">
               <Col xs={12} md={10} lg={8}>
                 <Card className="shadow-sm">
                   <Card.Body>

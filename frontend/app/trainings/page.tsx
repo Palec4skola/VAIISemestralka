@@ -9,16 +9,16 @@ import { useRouter } from "next/navigation";
 
 export default function TrainingsPage() {
   const router = useRouter();
-  const { trainings, mode, setMode, loading, error } = useTrainings();
+  const { trainings, mode, setMode, error } = useTrainings();
 
   return (
     <Container fluid className="p-0">
-      <Row>
+      <Row className="g-0">
         <Col xs="auto" className="p-0">
           <Sidebar />
         </Col>
 
-        <Col>
+        <Col className="ps-3 ps-md-4">
           <TrainingsHeader
             mode={mode}
             onModeChange={setMode}
@@ -27,7 +27,7 @@ export default function TrainingsPage() {
 
           {error && <Alert variant="danger">{error}</Alert>}
 
-          <Row className="justify-content-center">
+          <Row className="justify-content-center g-0">
             <Col xs={12} md={10} lg={8}>
               <TrainingsList trainings={trainings} />
             </Col>

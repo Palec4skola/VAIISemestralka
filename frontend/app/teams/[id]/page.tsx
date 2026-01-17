@@ -49,12 +49,12 @@ export default function TeamDetailPage() {
 
   return (
     <Container fluid className="p-0">
-      <Row>
+      <Row className="g-0">
         <Col xs="auto" className="p-0">
           <Sidebar />
         </Col>
 
-        <Col className="p-4">
+        <Col className="py-3 ps-3 ps-md-4">
           <h1 className="h3 mb-4">Detail tímu</h1>
           {error && <Alert variant="danger">{error}</Alert>}
 
