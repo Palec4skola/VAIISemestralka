@@ -1,5 +1,4 @@
-import { Card, Badge, Stack } from "react-bootstrap";
-import Link from "next/link";
+import { Card, Badge } from "react-bootstrap";
 import { TrainingListItem } from "@/types/training";
 import { useRouter } from "next/navigation";
 

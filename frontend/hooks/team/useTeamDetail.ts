@@ -1,39 +1,44 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Team } from "@/types/team";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+import { apiClient } from "@/lib/apiClient";
 
 export function useTeamDetail(teamId: string) {
   const [team, setTeam] = useState<Team | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fetchTeam = async () => {
+  const fetchTeam = useCallback(async () => {
+    if (!teamId) {
+      setTeam(null);
+      setError("Neplatné ID tímu.");
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/teams/${teamId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await apiClient(`/teams/${teamId}`);
 
       if (!res.ok) {
+        setTeam(null);
         setError(await res.text());
         return;
       }
 
       setTeam(await res.json());
     } catch {
+      setTeam(null);
       setError("Server nie je dostupný");
     } finally {
       setLoading(false);
     }
-  };
+  }, [teamId]);
 
   useEffect(() => {
     fetchTeam();
-  }, [teamId]);
+  }, [fetchTeam]);
 
   return { team, error, loading, refetch: fetchTeam };
 }

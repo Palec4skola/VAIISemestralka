@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Team } from "@/types/team";
+import { apiClient } from "@/lib/apiClient";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
-
-export function useEditTeam(teamId: string) {
+  export function useEditTeam(teamId: string) {
   const router = useRouter();
 
   const [team, setTeam] = useState<Team | null>(null);
@@ -17,12 +16,7 @@ export function useEditTeam(teamId: string) {
   useEffect(() => {
     const fetchTeam = async () => {
       try {
-        const token = localStorage.getItem("token");
-        const res = await fetch(`${API_URL}/teams/${teamId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await apiClient(`/teams/${teamId}`);
 
         if (!res.ok) {
           setError(await res.text());
@@ -53,14 +47,8 @@ export function useEditTeam(teamId: string) {
     setSuccess("");
 
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await fetch(`${API_URL}/teams/${teamId}`, {
+      const res = await apiClient(`/teams/${teamId}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({
           name: team.name,
           description: team.description,

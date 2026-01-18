@@ -1,8 +1,7 @@
 "use client";
 
+import { apiClient } from "@/lib/apiClient";
 import { useState } from "react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export function useInviteCode(teamId: string) {
   const [code, setCode] = useState("");
@@ -14,17 +13,9 @@ export function useInviteCode(teamId: string) {
     setError("");
     setCode("");
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Nie si prihlásený.");
-      setLoading(false);
-      return;
-    }
-
     try {
-      const res = await fetch(`${API_URL}/teams/${teamId}/invite`, {
+      const res = await apiClient(`/teams/${teamId}/invite`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
       });
     
       if (!res.ok) {

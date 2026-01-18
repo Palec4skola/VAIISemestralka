@@ -112,7 +112,7 @@
 }
 
 .calendar-grid {
-  overflow-x: auto;              /* fallback ak je to fakt úzke */
+  overflow-x: auto; /* fallback ak je to fakt úzke */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -137,17 +137,7 @@
   text-overflow: ellipsis;
 }
 
-/* --- tablet: trochu menšie paddingy --- */
-@media (max-width: 992px) {
-  .calendar-day {
-    padding: 8px;
-  }
-  .calendar-activity {
-    padding: 4px 6px;
-  }
-}
-
-/* --- mobil: 1 stĺpec (každý deň pod sebou) --- */
+/*  mobil... 1 stĺpec (každý deň pod sebou)  */
 @media (max-width: 576px) {
   .calendar-weekdays {
     display: none; /* na mobile zbytočné */
@@ -160,7 +150,7 @@
   }
 
   .calendar-day {
-    border: 1px solid rgba(0,0,0,0.08);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 10px;
     padding: 10px;
   }
@@ -173,21 +163,4 @@
     font-weight: 700;
     margin-bottom: 6px;
   }
-
-  .calendar-activity {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .calendar-activity-time {
-    font-variant-numeric: tabular-nums;
-    opacity: 0.8;
-    min-width: 48px;
-  }
-
-  .calendar-activity-title {
-    white-space: normal; /* na mobile nech sa zalamuje */
-  }
 }
-

@@ -1,21 +1,15 @@
 import { useEffect, useState } from "react";
-import {Team} from "@/types/team";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
+import { Team } from "@/types/team";
+import { apiClient } from "@/lib/apiClient";
 
 export function useTeams() {
   const [teams, setTeams] = useState<Team[]>([]);
   const [error, setError] = useState("");
 
-
-  const fetchTeams = async () => {
+  useEffect(() => {
+  const load = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_URL}/teams`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await apiClient("/teams");
 
       if (!res.ok) {
         setError(await res.text());
@@ -28,20 +22,14 @@ export function useTeams() {
     }
   };
 
-useEffect(() => {
-  (async () => {
-    await fetchTeams();
-  })();
+  load();
 }, []);
   const deleteTeam = async (id: number) => {
     if (!confirm("Naozaj chceš odstrániť tento tím?")) return;
 
     try {
-      const res = await fetch(`${API_URL}/teams/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+      const res = await apiClient(`/teams/${id}`, {
+        method: "DELETE"
       });
 
       if (!res.ok && res.status !== 204) {
@@ -49,7 +37,7 @@ useEffect(() => {
         return;
       }
 
-      setTeams(prev => prev.filter(t => t.teamId !== id));
+      setTeams((prev) => prev.filter((t) => t.teamId !== id));
     } catch {
       setError("Server nie je dostupný");
     }
@@ -57,4 +45,3 @@ useEffect(() => {
 
   return { teams, error, deleteTeam };
 }
-    

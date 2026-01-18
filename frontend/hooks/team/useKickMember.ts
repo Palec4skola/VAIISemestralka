@@ -1,8 +1,7 @@
 "use client";
 
+import { apiClient } from "@/lib/apiClient";
 import { useState } from "react";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL!;
 
 export function useKickMember(teamId: string, onSuccess?: () => Promise<void> | void) {
   const [loading, setLoading] = useState(false);
@@ -12,17 +11,9 @@ export function useKickMember(teamId: string, onSuccess?: () => Promise<void> | 
     setLoading(true);
     setError("");
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError("Nie si prihlásený.");
-      setLoading(false);
-      return false;
-    }
-
     try {
-      const res = await fetch(`${API_URL}/teams/${teamId}/kick/${memberId}`, {
+      const res = await apiClient(`/teams/${teamId}/kick/${memberId}`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) {

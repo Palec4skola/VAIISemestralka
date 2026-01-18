@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import { useCalendar } from "@/hooks/calendar/useCalendar";
+import { ArrowRight, ArrowLeft } from "react-bootstrap-icons";
 import "@/styles/CalendarPage.css";
 
 type ActivityType = "training" | "match";
@@ -90,13 +91,26 @@ export default function CalendarPage() {
             Kalendár – {monthName} {year}
           </h1>
 
-          <div className="calendar-controls">
-            <button onClick={() => setCurrent(new Date(year, month - 1, 1))}>
-              ◀
+          <div className="calendar-controls d-flex gap-2">
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => setCurrent(new Date(year, month - 1, 1))}
+            >
+              <ArrowLeft />
             </button>
-            <button onClick={() => setCurrent(new Date())}>Dnes</button>
-            <button onClick={() => setCurrent(new Date(year, month + 1, 1))}>
-              ▶
+
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => setCurrent(new Date())}
+            >
+              Dnes
+            </button>
+
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={() => setCurrent(new Date(year, month + 1, 1))}
+            >
+              <ArrowRight />
             </button>
           </div>
 
