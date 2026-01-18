@@ -8,7 +8,7 @@ type Message = {
   id: number;
   author: string;
   text: string;
-  time: string;    // "18:05"
+  time: string; // "18:05"
   isMe: boolean;
 };
 
@@ -65,7 +65,7 @@ export default function ChatPage() {
 
   return (
     <div className="chat-layout">
-      <Sidebar selected="Chat" setSelected={() => {}} />
+      <Sidebar />
 
       <main className="chat-main">
         <header className="chat-header">
@@ -86,9 +86,7 @@ export default function ChatPage() {
                 )}
 
                 <div className={`chat-bubble ${m.isMe ? "me" : "other"}`}>
-                  {!m.isMe && (
-                    <div className="chat-author">{m.author}</div>
-                  )}
+                  {!m.isMe && <div className="chat-author">{m.author}</div>}
                   <div className="chat-text">{m.text}</div>
                   <div className="chat-time">{m.time}</div>
                 </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import {
   Alert,
@@ -34,7 +33,6 @@ function formatDateTime(iso: string) {
 export default function MatchDetailPage() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const [showDelete, setShowDelete] = useState(false);
   const matchId = Number(params.id);
 
   const { match, loading, error } = useMatchDetail(matchId);
@@ -81,7 +79,6 @@ export default function MatchDetailPage() {
                     variant="outline-danger"
                     size="sm"
                     title="Zmazať zápas"
-                    onClick={() => setShowDelete(true)}
                     className="d-flex align-items-center"
                   >
                     <Trash size={16} />

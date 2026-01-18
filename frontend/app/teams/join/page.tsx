@@ -48,7 +48,6 @@ export default function JoinTeamPage() {
         return;
       }
 
-      const data = await res.json();
       setMessage("Úspešne si sa pripojil k tímu! 🎉");
     } catch {
       setMessage("Server nie je dostupný");

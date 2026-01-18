@@ -23,7 +23,6 @@ const COUNTRIES = [
 export default function CreatePage() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [coachId, setCoachId] = useState("");
   const [country, setCountry] = useState("");
   const router = useRouter();
   const [error, setError] = useState("");

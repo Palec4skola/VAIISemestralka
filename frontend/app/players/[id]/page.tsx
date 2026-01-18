@@ -3,20 +3,6 @@
 import Sidebar from "@/components/Sidebar";
 import "@/styles/PlayersPage.css";
 
-type Player = {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-};
-
-const MOCK_PLAYER: Player = {
-  id: 1,
-  name: "Peter Novák",
-  email: "peter.novak@example.com",
-  role: "player",
-};
-
 export default function PlayerDetailPage() {
   return (
     <div className="team-layout">

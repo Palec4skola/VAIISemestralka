@@ -1,0 +1,107 @@
+[33mcommit a1862272a1a77f75a90a395d4dc91e2aee8a1a30[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Jan 17 15:39:11 2026 +0100
+
+    Cleanup ignored files
+
+[33mcommit 27b17372d59b5c64c6e5de6d98abcdceb9d92dd5[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Jan 17 15:38:21 2026 +0100
+
+    Cleanup ignored files
+
+[33mcommit 323a80064bce529c4e065db41c8762310133a057[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Jan 17 15:17:38 2026 +0100
+
+    upravene UI pre treninigy
+
+[33mcommit 9a609152fb72bbfff6ba68f46982a393cff8c261[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Jan 17 12:59:54 2026 +0100
+
+    Spraveny match edit
+
+[33mcommit 24f5bd20967abdab4cbf606497831bacb9c9d863[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Jan 17 11:53:00 2026 +0100
+
+    dorobeny match detail
+
+[33mcommit b697715f80f3c5c99f0e4bb6f8d01410ba6dd1f4[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Fri Jan 16 15:29:55 2026 +0100
+
+    Spraveny MatchesController a rozrobene UI pre zapasy
+
+[33mcommit b5684d2418d9309611b15c9c92f4945d2641a638[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Fri Jan 16 11:44:23 2026 +0100
+
+    Odhlasovanie a obmedzenie pristupu neprihlasenym pouzivatelom
+
+[33mcommit d5e922d60bb8f66ea1540d6e32589b7bd50a68f8[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Thu Jan 15 15:15:55 2026 +0100
+
+    Pridavanie dochadzky na treningy
+
+[33mcommit 75aff4b39de407360a7ff02d8ce372933217b7e0[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Wed Jan 14 19:17:46 2026 +0100
+
+    Dorobene UI pre vytvaranie treningov a zobrazenie treningov pre hraca
+
+[33mcommit 472ba2c92f6b78b3f7d9f130f3cf2a6ba84c1543[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Wed Jan 14 11:13:01 2026 +0100
+
+    Dokoncenie operacii pre timy
+
+[33mcommit 19d80bc3bbb79a7011fb3e8743f84a569b83f1e1[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Jan 3 17:12:40 2026 +0100
+
+    uprava UI a vytvorenie endpointov pre treningy
+
+[33mcommit 6493e53620a7c3a24a83e46b0fdc0008cb69c48a[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Dec 20 01:10:00 2025 +0100
+
+    Only Coach can kick/add players and edit team
+
+[33mcommit e78d7afc1683de7cde9723c3a3109eff539a1170[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Fri Dec 19 13:43:31 2025 +0100
+
+    Adding players and displaying them
+
+[33mcommit 3fa3b63bdf948878985597f890e98817d5f0794d[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Thu Dec 18 12:40:11 2025 +0100
+
+    Migrations added and edited UI
+
+[33mcommit 1f0881e5599d7ca43bc4079e6274faf5797a5b0e[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Mon Dec 8 00:18:00 2025 +0100
+
+    CRUD nad teams a doplnenie UI
+
+[33mcommit bb4cd363880643c8c96efc6f4b9bf7131fcb292f[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sun Dec 7 18:37:32 2025 +0100
+
+    nejake CRUD nad teams a doplnenie UI
+
+[33mcommit b9354d9a8b5ba83d734e46143e3628779dc947a4[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sun Dec 7 12:12:31 2025 +0100
+
+    praca na UI
+
+[33mcommit b1c58dece1de73346b698c7db0b4f1fffc3be8c3[m
+Author: Palec4 <nemcekpavol294@gmail.com>
+Date:   Sat Dec 6 17:46:49 2025 +0100
+
+    Initial commit -backend+frontend prihlasovanie registracia vytvaranie timov

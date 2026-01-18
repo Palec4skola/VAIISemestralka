@@ -31,28 +31,23 @@ export default function TeamMembersList({
       {members.map((m) => (
         <ListGroup.Item key={m.id}>
           <Row className="align-items-center g-2">
-            {/* MENO - vždy */}
+
             <Col xs={10} md={4} className="fw-medium">
               {m.name}
 
-              {/* ROLA len na mobile (ako badge) */}
               <span className="ms-2 d-inline d-md-none">
                 <span className="badge bg-secondary">{m.role}</span>
               </span>
 
-              {/* EMAIL len na mobile (pod menom, voliteľné) */}
-              {/* ak ho nechceš vôbec na mobile, tento blok vymaž */}
               <div className="text-muted small d-block d-md-none">
                 {m.email}
               </div>
             </Col>
 
-            {/* ROLA - iba md+ */}
             <Col md={3} className="d-none d-md-block">
               {m.role}
             </Col>
 
-            {/* EMAIL - iba lg+ (na md ho skryjeme) */}
             <Col lg={4} className="text-muted d-none d-lg-block">
               {m.email}
             </Col>

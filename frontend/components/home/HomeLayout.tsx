@@ -7,10 +7,10 @@ type Props = {
   children: React.ReactNode;
 };
 
-export default function HomeLayout({ selected, onSelect, children }: Props) {
+export default function HomeLayout({  children }: Props) {
   return (
     <Container fluid className="p-0">
-      <Row>
+      <Row className="g-0">
         <Col xs="auto" className="p-0">
           <Sidebar />
         </Col>

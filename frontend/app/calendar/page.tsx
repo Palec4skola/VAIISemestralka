@@ -41,9 +41,7 @@ export default function CalendarPage() {
       const { day, time } = toDayAndTimeLocal(it.date);
 
       const url =
-        it.type === "training"
-          ? `/trainings/${it.id}`
-          : `/matches/${it.id}`;
+        it.type === "training" ? `/trainings/${it.id}` : `/matches/${it.id}`;
 
       const a: Activity = {
         id: it.id,
@@ -118,7 +116,8 @@ export default function CalendarPage() {
           {weeks.map((week, wi) => (
             <div key={wi} className="calendar-week">
               {week.map((day, di) => {
-                if (!day) return <div key={di} className="calendar-day empty" />;
+                if (!day)
+                  return <div key={di} className="calendar-day empty" />;
 
                 const activities = activitiesByDay[day] ?? [];
 
