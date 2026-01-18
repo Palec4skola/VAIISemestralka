@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useTeams } from "@/hooks/team/useTeams";
+import TeamSelectCard from "../teams/TeamSelectCard";
 
 type Props = {
   onSubmit: (data: {
@@ -81,25 +82,8 @@ export default function TrainingCreateForm({ onSubmit, loading = false, apiError
     <Form onSubmit={handleSubmit}>
       {combinedError && <Alert variant="danger">{combinedError}</Alert>}
 
-      <Form.Group className="mb-3" controlId="teamId">
-        <Form.Label>Tím</Form.Label>
-
-        
-          <Form.Select
-            value={teamId}
-            onChange={(e) => setTeamId(Number(e.target.value))}
-            required
-          >
-            <option value={0}>-- Vyber tím --</option>
-
-            {coachTeams.map((t) => (
-              <option key={t.teamId} value={t.teamId}>
-                {t.name}
-              </option>
-            ))}
-          </Form.Select>
-    
-
+      <Form.Group className="mb-0" controlId="teamId">
+        <TeamSelectCard teams={coachTeams} value={teamId} onChange={setTeamId} />
         {coachTeams.length === 0 && (
           <Form.Text className="text-muted">
             Nemáš žiadny tím, kde si Coach.

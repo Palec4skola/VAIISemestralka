@@ -37,7 +37,7 @@ export function useTrainings() {
     };
 
     load();
-  }, [mode]); // ⬅️ DÔLEŽITÉ
+  }, [mode]);
 
   return { trainings, mode, setMode, loading, error };
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Container } from "react-bootstrap";
-import CreateTeamForm from "@/components/teams/CreateTeamForm";
+import CreateTeamForm from "@/components/teams/TeamCreateForm";
 import { useCreateTeam } from "@/hooks/team/useCreateTeam";
 
 const COUNTRIES = [

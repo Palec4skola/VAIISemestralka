@@ -13,7 +13,6 @@ export function useJoinTeam() {
   const [success, setSuccess] = useState("");
 
   const updateCode = (value: string) => {
-    // uppercase + trim + max 4 znaky
     setCode(value.toUpperCase().trim().slice(0, 4));
   };
 
@@ -25,7 +24,6 @@ export function useJoinTeam() {
     setSuccess("");
 
     try {
-      // Pozn.: Ty posielaš JSON string (nie objekt). Nechávam to rovnako.
       const res = await apiClient("/teams/join", {
         method: "POST",
         body: JSON.stringify(code.trim()),

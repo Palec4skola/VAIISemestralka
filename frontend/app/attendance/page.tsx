@@ -1,102 +1,84 @@
 "use client";
 
+import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
-import "@/styles/AttendancePage.css";
+import { useTeams } from "@/hooks/team/useTeams";
+import { useTrainingAttendanceSummary } from "@/hooks/attendance/useTrainingAttendanceSummary";
 
-type PlayerAttendance = {
-  id: number;
-  name: string;
-  position: string;
-  status: "pride" | "nepride" | "zvazujem";
-};
-
-const MOCK_PLAYERS: PlayerAttendance[] = [
-  { id: 1, name: "Peter Novák", position: "Stredný záložník", status: "pride" },
-  { id: 2, name: "Ján Kováč", position: "Útočník", status: "zvazujem" },
-  { id: 3, name: "Martin Horváth", position: "Obranca", status: "nepride" },
-  { id: 4, name: "Lukáš Hudák", position: "Brankár", status: "pride" },
-];
-
-const MOCK_SESSIONS = [
-  { id: 1, date: "2024-12-10", time: "18:00", present: 12, total: 15 },
-  { id: 2, date: "2024-12-12", time: "19:00", present: 10, total: 15 },
-  { id: 3, date: "2024-12-15", time: "17:30", present: 14, total: 15 },
-];
+import { Alert, Col, Container, Row, Spinner } from "react-bootstrap";
+import TeamSelectCard from "@/components/teams/TeamSelectCard";
+import AttendanceSummaryTable from "@/components/attendance/AttendanceSummaryTable";
 
 export default function AttendancePage() {
+  const { teams, error: teamsError } = useTeams();
+
+  // držíme len user selection, nie "auto"
+  const [selectedTeamId, setSelectedTeamId] = useState(0);
+
+  // effectiveTeamId (bez useEffect -> bez warningu)
+  const teamId =
+    selectedTeamId > 0
+      ? selectedTeamId
+      : teams.length === 1
+        ? teams[0].teamId
+        : 0;
+
+  const {
+    items,
+    loading: attendanceLoading,
+    error: attendanceError,
+  } = useTrainingAttendanceSummary(teamId);
+
   return (
-    <div className="attendance-layout">
-      <Sidebar />
+    <Container fluid className="p-0">
+      <Row className="g-0">
+        <Col xs="auto" className="p-0">
+          <Sidebar />
+        </Col>
 
-      <main className="attendance-main">
-        <header className="attendance-header">
-          <h1 className="attendance-title">Dochádzka</h1>
-        </header>
+        <Col className="ps-3 py-3 ps-md-4">
+          <Row className="justify-content-center g-0">
+            <Col xs={12} md={10} lg={8} className="text-center">
+              <h1 className="h3 mb-1">Dochádzka tímu</h1>
+              <div className="text-muted mb-3">
+                Prehľad dochádzky na tréningoch
+              </div>
+              <TeamSelectCard
+                teams={teams}
+                value={teamId}
+                error={teamsError}
+                onChange={setSelectedTeamId}
+              />
+            </Col>
+          </Row>
 
-        <section className="attendance-grid">
-          <div className="attendance-card">
-            <h2 className="attendance-subtitle">Najbližší tréning</h2>
-            <p className="attendance-text">Dátum: 10. 12. 2024 · 18:00</p>
-            <p className="attendance-text">Miesto: Umelá tráva</p>
-            <p className="attendance-text">Potvrdených hráčov: 2 / 4 (mock)</p>
+          {attendanceLoading && (
+            <div className="d-flex align-items-center gap-2 text-muted">
+              <Spinner animation="border" size="sm" />
+              Načítavam dochádzku…
+            </div>
+          )}
 
-            <table className="attendance-table">
-              <thead>
-                <tr>
-                  <th>Hráč</th>
-                  <th>Pozícia</th>
-                  <th>Stav</th>
-                </tr>
-              </thead>
-              <tbody>
-                {MOCK_PLAYERS.map((p) => (
-                  <tr key={p.id}>
-                    <td>{p.name}</td>
-                    <td>{p.position}</td>
-                    <td>
-                      <span
-                        className={`attendance-badge attendance-${p.status}`}
-                      >
-                        {p.status === "pride"
-                          ? "Príde"
-                          : p.status === "nepride"
-                          ? "Nepríde"
-                          : "Zvažujem"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          {attendanceError && <Alert variant="danger">{attendanceError}</Alert>}
 
-          <div className="attendance-card">
-            <h2 className="attendance-subtitle">Posledné tréningy</h2>
-            <ul className="attendance-sessions">
-              {MOCK_SESSIONS.map((s) => (
-                <li key={s.id} className="attendance-session-item">
-                  <div>
-                    <div className="attendance-session-date">
-                      {s.date} · {s.time}
-                    </div>
-                    <div className="attendance-session-bar">
-                      <div
-                        className="attendance-session-bar-fill"
-                        style={{
-                          width: `${(s.present / s.total) * 100}%`,
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <span className="attendance-session-count">
-                    {s.present} / {s.total}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-      </main>
-    </div>
+          {!attendanceLoading && teamId > 0 && items.length > 0 && (
+            <Row className="justify-content-center g-0">
+              <Col xs={12} md={10} lg={8}>
+                <AttendanceSummaryTable items={items} />
+              </Col>
+            </Row>
+          )}
+
+          {!attendanceLoading &&
+            teamId > 0 &&
+            items.length === 0 &&
+            !attendanceError && (
+              <div className="text-muted">
+                Tento tím zatiaľ nemá žiadne minulé tréningy.
+              </div>
+            )}
+        </Col>
+      </Row>
+    </Container>
   );
 }

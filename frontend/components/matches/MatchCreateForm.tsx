@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useTeams } from "@/hooks/team/useTeams";
+import TeamSelectCard from "../teams/TeamSelectCard";
 
 type Props = {
   onSubmit: (data: {
@@ -25,7 +26,7 @@ export default function MatchCreateForm({
 
   const coachTeams = useMemo(
     () => teams.filter((t) => t.role === "Coach"),
-    [teams]
+    [teams],
   );
 
   const [teamId, setTeamId] = useState<number>(0);
@@ -40,7 +41,7 @@ export default function MatchCreateForm({
     const now = new Date();
     const pad = (n: number) => String(n).padStart(2, "0");
     return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(
-      now.getDate()
+      now.getDate(),
     )}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   }, []);
 
@@ -93,27 +94,12 @@ export default function MatchCreateForm({
     <Form onSubmit={handleSubmit}>
       {combinedError && <Alert variant="danger">{combinedError}</Alert>}
 
-      <Form.Group className="mb-3" controlId="teamId">
-        <Form.Label>Tím</Form.Label>
-
-        <Form.Select
+      <Form.Group className="mb-0" controlId="teamId">
+        <TeamSelectCard
+          teams={coachTeams}
           value={teamId}
-          onChange={(e) => setTeamId(Number(e.target.value))}
-          required
-        >
-          <option value={0}>-- Vyber tím --</option>
-          {coachTeams.map((t) => (
-            <option key={t.teamId} value={t.teamId}>
-              {t.name}
-            </option>
-          ))}
-        </Form.Select>
-
-        {coachTeams.length === 0 && (
-          <Form.Text className="text-muted">
-            Nemáš žiadny tím, kde si Coach.
-          </Form.Text>
-        )}
+          onChange={setTeamId}
+        />
       </Form.Group>
 
       <Form.Group className="mb-3" controlId="dateTime">

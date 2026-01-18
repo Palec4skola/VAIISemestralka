@@ -3,7 +3,7 @@
 import Sidebar from "@/components/Sidebar";
 import { useRouter } from "next/navigation";
 import { Card, Container, Row, Col } from "react-bootstrap";
-import MatchCreateForm from "@/components/matches/MatchCreateFrom";
+import MatchCreateForm from "@/components/matches/MatchCreateForm";
 import { useCreateMatch } from "@/hooks/matches/useCreateMatch";
 
 export default function CreateMatchPage() {
