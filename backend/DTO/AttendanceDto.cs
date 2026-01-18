@@ -27,5 +27,14 @@
         string? Status,
         string? AbsenceReason
     );
+    public record TeamAttendanceSummaryRowDto(
+    int UserId,
+    string Name,
+    string Email,
+    int Present,
+    int Total
+);
+
+
 
 }

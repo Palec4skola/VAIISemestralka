@@ -176,5 +176,61 @@ namespace FootballTeam.Controllers
 
             return Ok(new MyAttendanceDto(a?.Status, a?.AbsenceReason));
         }
+
+        [Authorize]
+        [HttpGet("summary/trainings")]
+        public async Task<ActionResult<List<TeamAttendanceSummaryRowDto>>>
+    GetTrainingSummary([FromQuery] int teamId)
+        {
+            var userId = GetUserId();
+            var now = DateTime.UtcNow;
+
+            // user musi byt v time
+            var isMember = await _context.TeamUsers
+                .AnyAsync(tu => tu.TeamId == teamId && tu.UserId == userId);
+
+            if (!isMember)
+                return Forbid();
+
+            // iba treningy v minulosti
+            var pastTrainings = _context.Trainings
+                .Where(t => t.TeamId == teamId && t.Date < now);
+
+            var total = await pastTrainings.CountAsync();
+
+            var members = await (
+                from tu in _context.TeamUsers
+                join u in _context.Users on tu.UserId equals u.Id
+                where tu.TeamId == teamId
+                select new { u.Id, u.Name, u.Email }
+            ).ToListAsync();
+
+            var presentByUser = await (
+                from a in _context.Attendances
+                join t in pastTrainings on a.EventId equals t.Id
+                where a.EventType == "Training"
+                      && a.Status == "Present"
+                group a by a.UserId into g
+                select new
+                {
+                    UserId = g.Key,
+                    Present = g.Count()
+                }
+            ).ToDictionaryAsync(x => x.UserId, x => x.Present);
+
+            var result = members
+                .Select(m => new TeamAttendanceSummaryRowDto(
+                    m.Id,
+                    m.Name,
+                    m.Email,
+                    presentByUser.TryGetValue(m.Id, out var p) ? p : 0,
+                    total
+                ))
+                .OrderByDescending(x => x.Present)
+                .ThenBy(x => x.Name)
+                .ToList();
+
+            return Ok(result);
+        }
     }
 }
