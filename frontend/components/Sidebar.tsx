@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { Nav, Button, Offcanvas, Dropdown } from "react-bootstrap";
+import { Person } from "react-bootstrap-icons";
 
 type MenuItem = { label: string; path: string };
 
@@ -41,20 +42,12 @@ export default function Sidebar() {
         variant="dark"
         className="w-100 d-flex align-items-center justify-content-between px-3 py-2"
       >
-        <span className="d-flex align-items-center gap-2">
-          <span style={{ fontSize: 18 }}>👤</span>
-          <span className="text-truncate">Účet</span>
-        </span>
-        <span style={{ opacity: 0.8 }}>▾</span>
+        <Person className="text-truncate" />
+        <span className="text-truncate">Účet</span>
       </Dropdown.Toggle>
 
       <Dropdown.Menu className="shadow">
-        <Dropdown.Item onClick={() => go("/profile")}>
-          Profil
-        </Dropdown.Item>
-        <Dropdown.Item onClick={() => go("/settings")}>
-          Nastavenia
-        </Dropdown.Item>
+        <Dropdown.Item onClick={() => go("/profile")}>Profil</Dropdown.Item>
         <Dropdown.Divider />
         <Dropdown.Item onClick={logout} className="text-danger">
           Odhlásiť sa
@@ -82,9 +75,7 @@ export default function Sidebar() {
       </Nav>
 
       {/* profil úplne dole */}
-      <div className="mt-auto pt-3">
-        {ProfileMenu}
-      </div>
+      <div className="mt-auto pt-3">{ProfileMenu}</div>
     </div>
   );
 
