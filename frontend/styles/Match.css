@@ -1,0 +1,97 @@
+.matchesShell {
+  min-height: 100vh;
+  background: #f8f9fb;
+}
+
+.matchesContent {
+  min-height: 100vh;
+}
+
+.matchesHeaderWrap {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+/* header actions */
+.matchesActions {
+  flex-wrap: wrap;
+}
+
+.matchesToggle .btn,
+.matchesCreate {
+  border-radius: 12px;
+}
+
+/* match card */
+.matchCard {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.matchCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,0.08);
+}
+
+.matchCard:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+
+.matchBody {
+  padding: 14px 16px;
+}
+
+.matchMeta {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.matchTitle {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-top: 4px;
+}
+
+.matchSub {
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+.matchBadge {
+  font-size: 0.95rem;
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+
+/* mobile */
+@media (max-width: 576px) {
+  .matchesHeaderWrap {
+    padding: 12px;
+  }
+
+  .matchesTop {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch !important;
+  }
+
+  .matchesActions {
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .matchBody {
+    padding: 12px;
+  }
+
+  .matchBadgeWrap {
+    align-self: center;
+  }
+}

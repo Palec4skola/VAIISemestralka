@@ -1,0 +1,117 @@
+/* celá stránka */
+.appShell {
+  min-height: 100vh;
+  background: #f8f9fb;
+}
+
+/* sidebar – na desktope nech je „pevnejší“ */
+@media (min-width: 992px) {
+  .appSidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
+  }
+}
+
+/* obsah */
+.appContent {
+  min-height: 100vh;
+}
+
+/* header */
+.pageHeader {
+  padding-top: 6px;
+  padding-bottom: 10px;
+}
+
+.teamSelectWrap {
+  margin-top: 10px;
+}
+
+
+/* mobil – menšie odsadenia */
+@media (max-width: 576px) {
+  .appContent {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+.attendanceCard {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.attendanceBody {
+  padding: 0;
+}
+
+/* table */
+.attendanceTable thead th {
+  background: #f8f9fb;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+  padding: 14px;
+}
+
+.attendanceTable tbody td {
+  padding: 14px;
+  vertical-align: middle;
+}
+
+.attendanceTable tbody tr:hover {
+  background: rgba(0,0,0,0.025);
+}
+
+/* text */
+.attendanceEmail {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.attendanceCount {
+  font-weight: 500;
+}
+
+/* progress */
+.attendanceProgress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attendanceProgress .progress {
+  flex: 1;
+  height: 8px;
+}
+
+.attendancePercent {
+  min-width: 36px;
+  font-size: 0.85rem;
+  color: #6c757d;
+  text-align: right;
+}
+
+/* mobile – viac priestoru, menej bordelu */
+@media (max-width: 576px) {
+  .attendanceTable thead {
+    display: none;
+  }
+
+  .attendanceTable tbody tr {
+    display: block;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+    padding: 12px;
+  }
+
+  .attendanceTable tbody td {
+    display: block;
+    padding: 4px 0;
+  }
+
+  .attendanceCount {
+    margin-top: 4px;
+  }
+}
+

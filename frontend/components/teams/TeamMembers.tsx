@@ -1,6 +1,7 @@
 import { Card, ListGroup, Button, Row, Col } from "react-bootstrap";
 import { Trash, Plus } from "react-bootstrap-icons";
 import { Member } from "@/types/member";
+import "@/styles/Team.css";
 
 type Props = {
   members: Member[];
@@ -16,12 +17,17 @@ export default function TeamMembersList({
   onKick,
 }: Props) {
   return (
-  <Card className="shadow-sm">
-    <Card.Header className="d-flex justify-content-between align-items-center">
+  <Card className="memberCard shadow-sm">
+    <Card.Header className="memberHeader">
       <strong>Členovia tímu</strong>
 
       {isCoach && (
-        <Button size="sm" variant="outline-success" onClick={onInvite}>
+        <Button
+          size="sm"
+          variant="outline-success"
+          onClick={onInvite}
+          className="inviteBtn"
+        >
           <Plus /> Pridať hráča
         </Button>
       )}
@@ -29,26 +35,26 @@ export default function TeamMembersList({
 
     <ListGroup variant="flush">
       {members.map((m) => (
-        <ListGroup.Item key={m.id}>
-          <Row className="align-items-center g-2">
+        <ListGroup.Item key={m.id} className="memberItem">
+          <Row className="align-items-center g-2 memberRow">
 
-            <Col xs={10} md={4} className="fw-medium">
+            <Col xs={10} md={4} className="memberName">
               {m.name}
 
               <span className="ms-2 d-inline d-md-none">
                 <span className="badge bg-secondary">{m.role}</span>
               </span>
 
-              <div className="text-muted small d-block d-md-none">
+              <div className="memberEmailMobile d-md-none">
                 {m.email}
               </div>
             </Col>
 
-            <Col md={3} className="d-none d-md-block">
+            <Col md={3} className="d-none d-md-block memberRole">
               {m.role}
             </Col>
 
-            <Col lg={4} className="text-muted d-none d-lg-block">
+            <Col lg={4} className="d-none d-lg-block memberEmail">
               {m.email}
             </Col>
 
@@ -58,6 +64,7 @@ export default function TeamMembersList({
                   size="sm"
                   variant="outline-danger"
                   onClick={() => onKick(m.id)}
+                  className="kickBtn"
                 >
                   <Trash />
                 </Button>

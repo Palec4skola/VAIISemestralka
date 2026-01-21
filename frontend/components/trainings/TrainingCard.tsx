@@ -1,6 +1,7 @@
 import { Card, Badge } from "react-bootstrap";
 import { TrainingListItem } from "@/types/training";
 import { useRouter } from "next/navigation";
+import "@/styles/Training.css";
 
 type Props = {
   training: TrainingListItem;
@@ -11,34 +12,32 @@ export default function TrainingCard({ training }: Props) {
   const date = new Date(training.date);
 
   return (
-    <Card className="mb-3 shadow-sm">
-      <Card.Body
-        onClick={() => router.push(`/trainings/${training.id}`)}
-        className="text-decoration-none text-dark"
-      >
-        <div className="d-flex justify-content-between align-items-start">
-          <div>
-            <Card.Title className="mb-1">
-              {date.toLocaleDateString("sk-SK")}{" "}
-              {date.toLocaleTimeString("sk-SK", {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}
-            </Card.Title>
-
-            <Card.Subtitle className="text-muted mb-2">
-              {training.name}
-            </Card.Subtitle>
+  <Card
+    className="trainingCard mb-3 shadow-sm"
+    onClick={() => router.push(`/trainings/${training.id}`)}
+    role="button"
+    tabIndex={0}
+  >
+    <Card.Body className="trainingBody">
+      <div className="d-flex justify-content-between align-items-start gap-3">
+        <div className="trainingMain">
+          <div className="trainingMeta">
+            {date.toLocaleDateString("sk-SK")}{" "}
+            {date.toLocaleTimeString("sk-SK", { hour: "2-digit", minute: "2-digit" })}
           </div>
-          <Badge bg="secondary">Tréning</Badge>
+
+          <div className="trainingTitle">{training.name}</div>
+          <div className="trainingLocation">{training.location}</div>
+
+          {training.description && (
+            <div className="trainingDesc">{training.description}</div>
+          )}
         </div>
 
-        <div className="fw-semibold">{training.location}</div>
+        <Badge bg="secondary" className="trainingBadge">Tréning</Badge>
+      </div>
+    </Card.Body>
+  </Card>
+);
 
-        {training.description && (
-          <div className="text-muted mt-2">{training.description}</div>
-        )}
-      </Card.Body>
-    </Card>
-  );
 }

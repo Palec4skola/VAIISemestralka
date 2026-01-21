@@ -11,8 +11,8 @@ import EventAttendanceTable from "@/components/attendance/EventAttendanceTable";
 type EventType = "Training" | "Match";
 
 type Props = {
-  title?: string;          // napr. "Dochádzka"
-  eventType: EventType;    // "Training" | "Match"
+  title?: string;
+  eventType: EventType;
   eventId: number;
   isCoach: boolean;
 };
@@ -30,7 +30,7 @@ export default function EventAttendanceSection({
   const handleSave = async (
     userId: number,
     status: AttendanceStatus,
-    reason?: string
+    reason?: string,
   ) => {
     const ok = await upsert.upsert({
       eventType,

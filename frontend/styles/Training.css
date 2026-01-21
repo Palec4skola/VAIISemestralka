@@ -1,0 +1,66 @@
+.trainingsShell {
+  min-height: 100vh;
+  background: #f8f9fb;
+}
+
+.trainingsContent {
+  min-height: 100vh;
+}
+
+.trainingsHeaderWrap {
+  margin-bottom: 14px;
+}
+.trainingCard {
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: transform 140ms ease, box-shadow 140ms ease, background 140ms ease;
+}
+
+.trainingCard:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,0.08);
+}
+
+.trainingCard:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(13,110,253,0.25);
+}
+
+.trainingBody {
+  padding: 14px 16px;
+}
+
+.trainingMeta {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.trainingTitle {
+  font-weight: 600;
+  font-size: 1.05rem;
+  margin-top: 4px;
+}
+
+.trainingLocation {
+  color: #6c757d;
+  margin-top: 4px;
+}
+
+.trainingDesc {
+  color: #6c757d;
+  margin-top: 8px;
+}
+
+.trainingBadge {
+  border-radius: 999px;
+  padding: 8px 10px;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 576px) {
+  .trainingBody {
+    padding: 12px;
+  }
+}
+

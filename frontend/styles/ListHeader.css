@@ -1,0 +1,29 @@
+.listHeader {
+  background: #fff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  padding: 14px 16px;
+  gap: 12px;
+}
+
+.listHeaderActions {
+  flex-wrap: wrap;
+}
+
+.listHeaderToggle .btn,
+.listHeaderCreate {
+  border-radius: 12px;
+}
+
+/* mobile */
+@media (max-width: 576px) {
+  .listHeader {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+
+  .listHeaderActions {
+    justify-content: space-between;
+    width: 100%;
+  }
+}

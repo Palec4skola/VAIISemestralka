@@ -3,6 +3,7 @@
 import { Badge, Card } from "react-bootstrap";
 import type { MatchListItemDto } from "@/types/match";
 import { useRouter } from "next/navigation";
+import "@/styles/Match.css";
 
 function fmt(iso: string) {
   const d = new Date(iso);
@@ -15,27 +16,38 @@ function fmt(iso: string) {
 export default function MatchCard({ match }: { match: MatchListItemDto }) {
   const { date, time } = fmt(match.date);
   const played = match.date <= new Date().toISOString();
-    const router = useRouter();
+  const router = useRouter();
 
   return (
-      <Card className="mb-3 shadow-sm" onClick={() => router.push(`/matches/${match.id}`)}>
-        <Card.Body className="d-flex justify-content-between align-items-start gap-3">
-          <div>
-            <div className="text-muted small">
-              {date} · {time} · {match.name}
-            </div>
-            <div className="fw-semibold fs-5 mt-1">{match.name} vs {match.opponent}</div>
-            <div className="text-muted mt-1">{match.location}</div>
+    <Card
+      className="matchCard mb-3 shadow-sm"
+      onClick={() => router.push(`/matches/${match.id}`)}
+      role="button"
+      tabIndex={0}
+    >
+      <Card.Body className="matchBody d-flex justify-content-between align-items-start gap-3">
+        <div className="matchMain">
+          <div className="matchMeta">
+            {date} · {time} · {match.name}
           </div>
+          <div className="matchTitle">
+            {match.name} vs {match.opponent}
+          </div>
+          <div className="matchSub">{match.location}</div>
+        </div>
 
-          <div className="text-end">
-            {played ? (
-              <Badge bg="success" className="fs-6">{match.result}</Badge>
-            ) : (
-              <Badge bg="warning" text="dark" className="fs-6">Nadchádzajúci</Badge>
-            )}
-          </div>
-        </Card.Body>
-      </Card>
+        <div className="text-end matchBadgeWrap">
+          {played ? (
+            <Badge bg="success" className="matchBadge">
+              {match.result}
+            </Badge>
+          ) : (
+            <Badge bg="warning" text="dark" className="matchBadge">
+              Nadchádzajúci
+            </Badge>
+          )}
+        </div>
+      </Card.Body>
+    </Card>
   );
 }

@@ -1,0 +1,143 @@
+.teamCard {
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.teamCardHeader {
+  background: linear-gradient(180deg, rgba(0, 58, 146, 0.08), rgba(13,110,253,0.02));
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  padding: 14px 16px;
+}
+
+.teamListItem {
+  padding: 14px 16px;
+  transition: background 140ms ease, transform 140ms ease;
+}
+
+.teamListItem:hover {
+  background: rgba(0,0,0,0.03);
+  transform: translateY(-1px);
+}
+
+    /* “responzívnosť” = kompaktnejšie + menej tieňov na mobile */
+@media (max-width: 576px) {
+  .teamCard { border-radius: 12px; }
+  .teamCardHeader { padding: 12px 12px; }
+  .teamListItem { padding: 12px 12px; }
+}
+
+/* team member component style */
+.memberCard {
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* header */
+.memberHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(25,135,84,0.08),
+    rgba(25,135,84,0.02)
+  );
+}
+
+/* list item */
+.memberItem {
+  padding: 14px 16px;
+  transition: background 140ms ease;
+}
+
+.memberItem:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+/* text */
+.memberName {
+  font-weight: 500;
+}
+
+.memberRole {
+  color: #495057;
+}
+
+.memberEmail {
+  color: #6c757d;
+}
+
+.memberEmailMobile {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* buttons */
+.inviteBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.kickBtn {
+  padding: 4px 8px;
+}
+
+/* mobile – kompaktnejšie + lepšie zalomenie */
+@media (max-width: 576px) {
+  .memberHeader {
+    padding: 12px;
+  }
+
+  .memberItem {
+    padding: 12px;
+  }
+}
+
+.teamFormCard {
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.teamFormBody {
+  padding: 24px;
+}
+
+/* labels */
+.teamFormLabel {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+/* inputs */
+.teamFormInput {
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.teamFormInput:focus {
+  border-color: #198754; /* bootstrap success */
+  box-shadow: 0 0 0 0.15rem rgba(25,135,84,0.25);
+}
+
+/* submit */
+.teamFormSubmit {
+  margin-top: 8px;
+  padding: 12px;
+  font-weight: 500;
+  border-radius: 12px;
+}
+
+/* mobile */
+@media (max-width: 576px) {
+  .teamFormBody {
+    padding: 16px;
+  }
+}
+
+
+
