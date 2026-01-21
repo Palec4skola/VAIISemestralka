@@ -8,7 +8,7 @@
         public Team Team { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? ExpiresAt { get; set; } // voliteľné
+        public DateTime? ExpiresAt { get; set; }
         public bool IsActive { get; set; } = true;
     }
 

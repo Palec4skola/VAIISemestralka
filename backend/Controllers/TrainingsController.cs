@@ -123,6 +123,7 @@ namespace FootballTeam.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
         [Authorize]
         [HttpGet("{id:int}/detail")]
         public async Task<ActionResult<TrainingDetailDto>> GetTrainingDetail(int id)
@@ -167,7 +168,6 @@ namespace FootballTeam.Controllers
                 myAttendance?.AbsenceReason
             ));
         }
-
 
         private DateTime EnsureUtc(DateTime dt)
         {

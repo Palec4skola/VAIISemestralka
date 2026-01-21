@@ -46,6 +46,7 @@ namespace backend.Controllers
 
             return Ok(user);
         }
+
         [HttpPut("me")]
         public async Task<IActionResult> UpdateMe([FromBody] UpdateUserProfileDto dto)
         {

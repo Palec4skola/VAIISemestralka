@@ -19,7 +19,6 @@ namespace backend.Controllers
         {
             _context = context;
         }
-        // ---------- helpers ----------
         private int GetUserId()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -35,18 +34,15 @@ namespace backend.Controllers
 
         private async Task<bool> IsCoachOfTeam(int userId, int teamId)
         {
-            // 1) Ak máš rolu v TeamUser
             var isCoachByTeamUser = await _context.TeamUsers.AnyAsync(tu =>
                 tu.UserId == userId && tu.TeamId == teamId && tu.Role == "Coach");
 
 
             if (isCoachByTeamUser) return true;
 
-            // 2) Fallback: Team.CoachId (ak to používaš ako "owner")
             return await _context.Teams.AnyAsync(t => t.Id == teamId && t.CoachId == userId);
         }
 
-        // ---------- READ (player aj coach) ----------
 
         // GET: matches
         // vráti zápasy iba z tímov, v ktorých som člen
@@ -74,8 +70,6 @@ namespace backend.Controllers
         public async Task<ActionResult<MatchDetailDto>> GetById(int id)
         {
             var userId = GetUserId();
-
-            
 
             var match = await _context.Matches.AsNoTracking().FirstOrDefaultAsync(m => m.Id == id);
             if (match == null) return NotFound();

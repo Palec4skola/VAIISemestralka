@@ -78,7 +78,6 @@ namespace FootballTeam.Controllers
                 if (!coach) return Forbid();
             }
 
-            // obaja (caller aj target) musia byť členovia tímu
             var callerMember = await IsMember(teamId.Value, callerId);
             if (!callerMember) return Forbid();
 
