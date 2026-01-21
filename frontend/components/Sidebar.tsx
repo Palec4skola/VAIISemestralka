@@ -107,7 +107,7 @@ export default function Sidebar() {
           className="mb-4 fs-4 fw-bold text-start p-0"
           onClick={() => router.push("/home")}
         >
-          HomeBase
+          Home
         </Button>
 
         {/* dôležité: tu sa vyrenderuje aj profil dole */}

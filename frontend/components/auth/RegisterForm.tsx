@@ -16,7 +16,6 @@ export default function RegisterForm() {
     setConfirmPassword,
     submit,
   } = useRegister();
-//:TODO validation
   return (
     <form onSubmit={submit}>
       {error && <Alert variant="danger">{error}</Alert>}

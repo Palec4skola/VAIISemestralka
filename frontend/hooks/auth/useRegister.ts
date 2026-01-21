@@ -18,17 +18,29 @@ export function useRegister() {
   const [loading, setLoading] = useState(false);
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    validateRequiredName(name);
-    validateEmail(email);
-    validatePassword(password);
-    validateConfirmPassword(password, confirmPassword);
-    if (!email || !password || !confirmPassword) {
-      setError("Vyplň všetky polia");
+
+    // Run all validations and show the first error found
+    const nameError = validateRequiredName(name);
+    if (nameError) {
+      setError(nameError);
       return;
     }
 
-    if (password !== confirmPassword) {
-      setError("Heslá sa nezhodujú");
+    const emailError = validateEmail(email);
+    if (emailError) {
+      setError(emailError);
+      return;
+    }
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      setError(passwordError);
+      return;
+    }
+
+    const confirmPasswordError = validateConfirmPassword(password, confirmPassword);
+    if (confirmPasswordError) {
+      setError(confirmPasswordError);
       return;
     }
 
